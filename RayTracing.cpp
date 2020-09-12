@@ -26,6 +26,8 @@ Vec3 CalculateRayColour(Ray* R, Sphere Spheres[], int Reflections = 1) {
 
             if (Reflections<10) 
                 Color += CalculateRayColour(ReflectedRay, Spheres, Reflections + 1);
+
+            delete ReflectedRay;
         }
 
     }
