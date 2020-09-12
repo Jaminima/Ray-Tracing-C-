@@ -25,13 +25,13 @@ int main(int argc, char** argv)
     Ray R;
     for (float x = -10, y=-10; y < 10; x += 1,i++) {
         if (x >= 10) { x = -10; y += 1; }
-        R.Direction = Vec3(x, y, -20);
+        R.Direction = Vec3(x, y, 20);
 
         //grid[i] = S.Intersects(&R);
 
         if (S2.Intersects(&R)) {
             rgb[i * 3] = 0;
-            rgb[(i * 3) + 1] = 255;
+            rgb[(i * 3) + 1] = 255 * (S2.IntersectionDistance(&R));
             rgb[(i * 3) + 2] = 0;
         }
 
