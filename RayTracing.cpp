@@ -79,6 +79,8 @@ int main(int argc, char** argv)
         Threads[i].swap(tThread);
     }
 
+    for (i = 0; i < ViewWS; i++) Threads[i].join();
+
     stbi_write_png("image.png", 2*ViewWidth/ViewSteps, 2*ViewWidth/ViewSteps, 3, rgb, 0);
 }
 
