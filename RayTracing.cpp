@@ -1,5 +1,6 @@
 #include <iostream>
 #include "SceneObject.h"
+#include "Sphere.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -20,7 +21,7 @@ Vec3 CalculateRayColour(Ray* R, Sphere Spheres[], int Reflections = 1) {
         if (THit != -1.0f && (THit < HitDistance || HitDistance==-1.0f)) {
             HitDistance = THit;
 
-            Color = Spheres[i].GetColor()*(1.0f/Reflections);
+            Color = Spheres[i].Colour*(1.0f/Reflections);
 
             Ray* ReflectedRay = Spheres[i].PointNormal(Spheres[i].IntersectionPoint(R, HitDistance), R);
 
@@ -39,9 +40,9 @@ int main(int argc, char** argv)
 {
     Sphere Spheres[3]{ Sphere(), Sphere(), Sphere() };
 
-    Spheres[0].radius = 4; Spheres[0].SetCenter(Vec3(-4, -3, 4)); Spheres[0].SetColor(Vec3(255, 0, 0));
-    Spheres[1].radius = 4; Spheres[1].SetCenter(Vec3(4, -2, -1)); Spheres[1].SetColor(Vec3(0, 255, 0));
-    Spheres[2].radius = 4; Spheres[2].SetCenter(Vec3(0, 5, 2)); Spheres[2].SetColor(Vec3(0, 0, 255));
+    Spheres[0].radius = 4; Spheres[0].Center = Vec3(-4, -3, 4); Spheres[0].Colour = Vec3(255, 0, 0);
+    Spheres[1].radius = 4; Spheres[1].Center = Vec3(4, -2, -1); Spheres[1].Colour = Vec3(0, 255, 0);
+    Spheres[2].radius = 4; Spheres[2].Center = Vec3(0, 5, 2); Spheres[2].Colour = Vec3(0, 0, 255);
 
     int i = 0;
 
