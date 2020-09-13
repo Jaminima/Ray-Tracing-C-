@@ -5,6 +5,10 @@ class Sphere : public SceneObject {
 public:
 	float radius = 0;
 
+	Sphere(Vec3 Cent, Vec3 Col, float r) : SceneObject(Cent,Col) {
+		this->radius = r;
+	}
+
 	bool Intersects(Ray* Ray) override {
 		return IntersectionDistance(Ray) >= 0;
 	}

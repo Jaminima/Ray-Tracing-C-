@@ -1,6 +1,7 @@
 #include <iostream>
 #include "SceneObject.h"
 #include "Sphere.h"
+#include "SceneObjectList.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -10,27 +11,32 @@
 const int ViewWidth = 10;
 const float ViewSteps = 0.01f;
 
-Vec3 CalculateRayColour(Ray* R, Sphere Spheres[], int Reflections = 1) {
+Vec3 CalculateRayColour(Ray* R, SceneObjList* Objs, int Reflections = 1) {
     Vec3 Color(0, 0, 0);
     float HitDistance = -1.0f, THit;
 
-    for (int i = 0; i < 3; i++) {
+    SceneObjItem* I = Objs->Head;
+    SceneObject* O;
 
-        THit = Spheres[i].IntersectionDistance(R);
+    while (I!=0x0){
+        O = I->Obj;
+
+        THit = O->IntersectionDistance(R);
 
         if (THit != -1.0f && (THit < HitDistance || HitDistance==-1.0f)) {
             HitDistance = THit;
 
-            Color = Spheres[i].Colour*(1.0f/Reflections);
+            Color = O->Colour*(1.0f/Reflections);
 
-            Ray* ReflectedRay = Spheres[i].PointNormal(Spheres[i].IntersectionPoint(R, HitDistance), R);
+            Ray* ReflectedRay = O->PointNormal(I->Obj->IntersectionPoint(R, HitDistance), R);
 
             if (Reflections<10) 
-                Color += CalculateRayColour(ReflectedRay, Spheres, Reflections + 1);
+                Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
 
             delete ReflectedRay;
         }
 
+        I = I->Next;
     }
     return Color;
 }
@@ -38,11 +44,11 @@ Vec3 CalculateRayColour(Ray* R, Sphere Spheres[], int Reflections = 1) {
 
 int main(int argc, char** argv)
 {
-    Sphere Spheres[3]{ Sphere(), Sphere(), Sphere() };
+    SceneObjList Objs;
 
-    Spheres[0].radius = 4; Spheres[0].Center = Vec3(-4, -3, 4); Spheres[0].Colour = Vec3(255, 0, 0);
-    Spheres[1].radius = 4; Spheres[1].Center = Vec3(4, -2, -1); Spheres[1].Colour = Vec3(0, 255, 0);
-    Spheres[2].radius = 4; Spheres[2].Center = Vec3(0, 5, 2); Spheres[2].Colour = Vec3(0, 0, 255);
+    Objs.Add(new Sphere(Vec3(-4, 3, 4), Vec3(255, 0, 0), 4));
+    Objs.Add(new Sphere(Vec3(4, 2, -1), Vec3(0, 255, 0), 4));
+    Objs.Add(new Sphere(Vec3(0, -5, 2), Vec3(0, 0, 255), 4));
 
     int i = 0;
 
@@ -53,7 +59,7 @@ int main(int argc, char** argv)
         if (x >= ViewWidth) { x = -ViewWidth; y += ViewSteps; }
         R.Direction = Vec3(x, y, 20);
 
-        Vec3 Color = CalculateRayColour(&R, Spheres);
+        Vec3 Color = CalculateRayColour(&R, &Objs);
 
         rgb[i * 3] = Color.x;
         rgb[i * 3 + 1] = Color.y;

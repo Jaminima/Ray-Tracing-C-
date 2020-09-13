@@ -11,6 +11,14 @@ public:
 	Vec3 Center;
 	Vec3 Colour;
 
+	SceneObject(Vec3 Cent, Vec3 Col) {
+		this->Center = Cent;
+
+		this->Center.y *= -1;
+
+		this->Colour = Col;
+	}
+
 	virtual bool Intersects(Ray* Ray) { return 0; }
 
 	virtual float IntersectionDistance(Ray* Ray) { return 0; }
