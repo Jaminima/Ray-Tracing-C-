@@ -8,14 +8,9 @@ public:
 
 class SceneObject {
 public:
-	Vec3 Center;
 	Vec3 Colour;
 
-	SceneObject(Vec3 Cent, Vec3 Col) {
-		this->Center = Cent;
-
-		this->Center.y *= -1;
-
+	SceneObject(Vec3 Col) {
 		this->Colour = Col;
 	}
 

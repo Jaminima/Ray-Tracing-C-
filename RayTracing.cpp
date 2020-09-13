@@ -1,9 +1,12 @@
 #include <iostream>
-#include "SceneObject.h"
-#include "Sphere.h"
-#include "SceneObjectList.h"
-
 #include <thread>
+
+#include "SceneObject.h"
+
+#include "Sphere.h"
+#include "Triangle.h"
+
+#include "SceneObjectList.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -16,7 +19,7 @@ const int ViewWS = 2000;
 
 Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
 	Vec3 Color(0, 0, 0);
-	float HitDistance = -1.0f, THit;
+	float HitDistance = -1.0f, THit, rhit;
 
 	Item* I = Objs->Head;
 	SceneObject* O;
@@ -66,6 +69,7 @@ int main(int argc, char** argv)
 	Objs.Add(new Sphere(Vec3(-4, 3, 4), Vec3(255, 0, 0), 4));
 	Objs.Add(new Sphere(Vec3(4, 2, -1), Vec3(0, 255, 0), 4));
 	Objs.Add(new Sphere(Vec3(0, -5, 2), Vec3(0, 0, 255), 4));
+	Objs.Add(new Triangle(Vec3(0,-3,0), Vec3(-3,0,0), Vec3(3,0,0), Vec3(0, 255, 0)));
 
 	int i = 0;
 

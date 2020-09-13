@@ -149,6 +149,7 @@
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,9 +3,15 @@
 
 class Sphere : public SceneObject {
 public:
+	Vec3 Center;
+
 	float radius = 0;
 
-	Sphere(Vec3 Cent, Vec3 Col, float r) : SceneObject(Cent, Col) {
+	Sphere(Vec3 Cent, Vec3 Col, float r) : SceneObject(Col) {
+		this->Center = Cent;
+
+		this->Center.y *= -1;
+
 		this->radius = r;
 	}
 
