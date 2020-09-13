@@ -12,6 +12,7 @@
 
 const int ViewWidth = 10;
 const float ViewSteps = 0.01f;
+const int ViewWS = 2000;
 
 Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
     Vec3 Color(0, 0, 0);
@@ -43,6 +44,21 @@ Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
     return Color;
 }
 
+void RenderRow(float y, int i, List* Objs, unsigned char* rgb) {
+    
+    for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
+        Ray R;
+
+        R.Direction = Vec3(x, y, 20);
+
+        Vec3 Color = CalculateRayColour(&R, Objs);
+
+        rgb[i * 3] = Color.x;
+        rgb[i * 3 + 1] = Color.y;
+        rgb[i * 3 + 2] = Color.z;
+    }
+}
+
 int main(int argc, char** argv)
 {
     List Objs;
@@ -55,16 +71,12 @@ int main(int argc, char** argv)
 
     unsigned char* rgb = (unsigned char*)malloc((2 * ViewWidth / ViewSteps) * (2 * ViewWidth / ViewSteps) * 3);
 
-    for (float x = -ViewWidth, y = -ViewWidth; y < ViewWidth; x += ViewSteps, i++) {
-        if (x >= ViewWidth) { x = -ViewWidth; y += ViewSteps; }
+    std::thread Threads[ViewWS];
+    std::thread tThread;
 
-        Ray R;
-
-        Vec3 Color = CalculateRayColour(&R, &Objs);
-
-        rgb[i * 3] = Color.x;
-        rgb[i * 3 + 1] = Color.y;
-        rgb[i * 3 + 2] = Color.z;
+    for (float y = -ViewWidth; y < ViewWidth; y+=ViewSteps, i++) {
+        tThread = std::thread(RenderRow, y, i * ViewWS, &Objs, rgb);
+        Threads[i].swap(tThread);
     }
 
     stbi_write_png("image.png", 2*ViewWidth/ViewSteps, 2*ViewWidth/ViewSteps, 3, rgb, 0);
