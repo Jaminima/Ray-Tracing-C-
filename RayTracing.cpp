@@ -46,12 +46,13 @@ Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
 
 void RenderRow(float y, int i, List* Objs, unsigned char* rgb) {
     
-    for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
-        Ray R;
+    Ray R;
+    Vec3 Color;
 
+    for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
         R.Direction = Vec3(x, y, 20);
 
-        Vec3 Color = CalculateRayColour(&R, Objs);
+        Color = CalculateRayColour(&R, Objs);
 
         rgb[i * 3] = Color.x;
         rgb[i * 3 + 1] = Color.y;
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
 
     int i = 0;
 
-    unsigned char* rgb = (unsigned char*)malloc((2 * ViewWidth / ViewSteps) * (2 * ViewWidth / ViewSteps) * 3);
+    unsigned char* rgb = (unsigned char*)malloc(12 * pow(ViewWidth / ViewSteps,2));
 
     std::thread Threads[ViewWS];
     std::thread tThread;
