@@ -3,7 +3,7 @@
 
 class Ray {
 public:
-	Vec3 Origin = Vec3(0,0,-20), Direction;
+	Vec3 Origin = Vec3(0, 0, -20), Direction;
 };
 
 class SceneObject {
@@ -29,8 +29,3 @@ public:
 		return Ray->Origin + (Ray->Direction * Distance);
 	}
 };
-
-
-
-
-

@@ -5,7 +5,7 @@ class Sphere : public SceneObject {
 public:
 	float radius = 0;
 
-	Sphere(Vec3 Cent, Vec3 Col, float r) : SceneObject(Cent,Col) {
+	Sphere(Vec3 Cent, Vec3 Col, float r) : SceneObject(Cent, Col) {
 		this->radius = r;
 	}
 
@@ -33,7 +33,6 @@ public:
 	}
 
 	Ray* PointNormal(Vec3 Point, Ray* oRay) override {
-
 		Ray* nRay = new Ray();
 
 		nRay->Direction = -(2 * (oRay->Direction.dot(Point - Center)) * (Point - Center) - oRay->Direction);

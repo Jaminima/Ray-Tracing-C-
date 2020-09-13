@@ -15,73 +15,71 @@ const float ViewSteps = 0.01f;
 const int ViewWS = 2000;
 
 Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
-    Vec3 Color(0, 0, 0);
-    float HitDistance = -1.0f, THit;
+	Vec3 Color(0, 0, 0);
+	float HitDistance = -1.0f, THit;
 
-    Item* I = Objs->Head;
-    SceneObject* O;
+	Item* I = Objs->Head;
+	SceneObject* O;
 
-    while (I!=0x0){
-        O = (SceneObject*)I->Obj;
+	while (I != 0x0) {
+		O = (SceneObject*)I->Obj;
 
-        THit = O->IntersectionDistance(R);
+		THit = O->IntersectionDistance(R);
 
-        if (THit != -1.0f && (THit < HitDistance || HitDistance==-1.0f)) {
-            HitDistance = THit;
+		if (THit != -1.0f && (THit < HitDistance || HitDistance == -1.0f)) {
+			HitDistance = THit;
 
-            Color = O->Colour*(1.0f/Reflections);
+			Color = O->Colour * (1.0f / Reflections);
 
-            Ray* ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
+			Ray* ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
 
-            if (Reflections<10) 
-                Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
+			if (Reflections < 10)
+				Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
 
-            delete ReflectedRay;
-        }
+			delete ReflectedRay;
+		}
 
-        I = I->Next;
-    }
-    return Color;
+		I = I->Next;
+	}
+	return Color;
 }
 
 void RenderRow(float y, int i, List* Objs, unsigned char* rgb) {
-    
-    Ray R;
-    Vec3 Color;
+	Ray R;
+	Vec3 Color;
 
-    for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
-        R.Direction = Vec3(x, y, 20);
+	for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
+		R.Direction = Vec3(x, y, 20);
 
-        Color = CalculateRayColour(&R, Objs);
+		Color = CalculateRayColour(&R, Objs);
 
-        rgb[i * 3] = Color.x;
-        rgb[i * 3 + 1] = Color.y;
-        rgb[i * 3 + 2] = Color.z;
-    }
+		rgb[i * 3] = Color.x;
+		rgb[i * 3 + 1] = Color.y;
+		rgb[i * 3 + 2] = Color.z;
+	}
 }
 
 int main(int argc, char** argv)
 {
-    List Objs;
+	List Objs;
 
-    Objs.Add(new Sphere(Vec3(-4, 3, 4), Vec3(255, 0, 0), 4));
-    Objs.Add(new Sphere(Vec3(4, 2, -1), Vec3(0, 255, 0), 4));
-    Objs.Add(new Sphere(Vec3(0, -5, 2), Vec3(0, 0, 255), 4));
+	Objs.Add(new Sphere(Vec3(-4, 3, 4), Vec3(255, 0, 0), 4));
+	Objs.Add(new Sphere(Vec3(4, 2, -1), Vec3(0, 255, 0), 4));
+	Objs.Add(new Sphere(Vec3(0, -5, 2), Vec3(0, 0, 255), 4));
 
-    int i = 0;
+	int i = 0;
 
-    unsigned char* rgb = (unsigned char*)malloc(12 * pow(ViewWidth / ViewSteps,2));
+	unsigned char* rgb = (unsigned char*)malloc(12 * pow(ViewWidth / ViewSteps, 2));
 
-    std::thread Threads[ViewWS];
-    std::thread tThread;
+	std::thread Threads[ViewWS];
+	std::thread tThread;
 
-    for (float y = -ViewWidth; y < ViewWidth; y+=ViewSteps, i++) {
-        tThread = std::thread(RenderRow, y, i * ViewWS, &Objs, rgb);
-        Threads[i].swap(tThread);
-    }
+	for (float y = -ViewWidth; y < ViewWidth; y += ViewSteps, i++) {
+		tThread = std::thread(RenderRow, y, i * ViewWS, &Objs, rgb);
+		Threads[i].swap(tThread);
+	}
 
-    for (i = 0; i < ViewWS; i++) Threads[i].join();
+	for (i = 0; i < ViewWS; i++) Threads[i].join();
 
-    stbi_write_png("image.png", 2*ViewWidth/ViewSteps, 2*ViewWidth/ViewSteps, 3, rgb, 0);
+	stbi_write_png("image.png", 2 * ViewWidth / ViewSteps, 2 * ViewWidth / ViewSteps, 3, rgb, 0);
 }
-
