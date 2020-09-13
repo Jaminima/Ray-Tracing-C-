@@ -1,22 +1,22 @@
 #pragma once
 #include "SceneObject.h"
 
-class SceneObjItem {
+class Item {
 public:
-	SceneObjItem* Next = 0x0;
-	SceneObject* Obj = 0x0;
+	Item* Next = 0x0;
+	void* Obj = 0x0;
 
-	SceneObjItem(SceneObject* Obj) {
+	Item(void* Obj) {
 		this->Obj = Obj;
 	}
 };
 
-class SceneObjList {
+class List {
 public:
-	SceneObjItem* Head = 0x0;
+	Item* Head = 0x0;
 
-	void Add(SceneObject* Obj) {
-		SceneObjItem* Temp = new SceneObjItem(Obj);
+	void Add(void* Obj) {
+		Item* Temp = new Item(Obj);
 		Temp->Next = Head;
 		Head = Temp;
 	}
