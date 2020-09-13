@@ -14,6 +14,8 @@ public:
 		this->Colour = Col;
 	}
 
+	virtual float CorrectDistance(Ray* Ray, float D) { return D; }
+
 	virtual bool Intersects(Ray* Ray) { return 0; }
 
 	virtual float IntersectionDistance(Ray* Ray) { return 0; }

@@ -15,6 +15,10 @@ public:
 		this->V2.y *= -1;
 	}
 
+	float CorrectDistance(Ray* Ray, float D) override {
+		return (Ray->Origin-IntersectionPoint(Ray, D)).norm()/Ray->Origin.norm();
+	}
+
 	bool Intersects(Ray* Ray) override {
 		return IntersectionDistance(Ray) != -1;
 	}
@@ -55,10 +59,14 @@ public:
 
 		Vec3 N(V.y * V.z - V.z * W.y, V.z * W.x - V.x * W.z, V.x * W.y - V.y * W.x);
 
-		oRay->Direction.normalise();
+		Ray oCopy;
+		oCopy.Direction = 1 * oRay->Direction;
+		oCopy.Origin = 1 * oRay->Origin;
 
-		nRay->Direction = oRay->Direction + 2*(oRay->Direction.mul(N).mul(V));
-		nRay->Origin = Point;
+		oCopy.Direction.normalise();
+
+		nRay->Direction = - (oCopy.Direction + 2*(oCopy.Direction.mul(N).mul(V)));
+		nRay->Origin = Point + (nRay->Direction*EPSILON);
 
 		return nRay;
 	}

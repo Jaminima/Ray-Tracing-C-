@@ -29,17 +29,21 @@ Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
 
 		THit = O->IntersectionDistance(R);
 
-		if (THit != -1.0f && (THit < HitDistance || HitDistance == -1.0f)) {
-			HitDistance = THit;
+		if (THit != -1.0f) {
+			rhit = O->CorrectDistance(R, THit);
 
-			Color = O->Colour * (1.0f / Reflections);
+			if (rhit < HitDistance || HitDistance == -1.0f) {
+				HitDistance = rhit;
 
-			Ray* ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
+				Color = O->Colour * (1.0f / Reflections);
 
-			if (Reflections < 10)
-				Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
-
-			delete ReflectedRay;
+				if (Reflections < 20) {
+					Ray* ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
+					Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
+					delete ReflectedRay;
+				}
+				
+			}
 		}
 
 		I = I->Next;
@@ -67,9 +71,10 @@ int main(int argc, char** argv)
 	List Objs;
 
 	Objs.Add(new Sphere(Vec3(-4, 3, 4), Vec3(255, 0, 0), 4));
-	Objs.Add(new Sphere(Vec3(4, 2, -1), Vec3(0, 255, 0), 4));
+	Objs.Add(new Sphere(Vec3(4, 2, -5), Vec3(0, 255, 0), 4));
 	Objs.Add(new Sphere(Vec3(0, -5, 2), Vec3(0, 0, 255), 4));
-	Objs.Add(new Triangle(Vec3(0,-3,0), Vec3(-3,0,0), Vec3(3,0,0), Vec3(0, 255, 0)));
+	Objs.Add(new Triangle(Vec3(0,-3,2), Vec3(3,0,-5), Vec3(-3,0,4), Vec3(255, 0, 0)));
+	Objs.Add(new Triangle(Vec3(-10, -8, 0), Vec3(-10, 8, 0), Vec3(00, 0, 20), Vec3(0, 120, 0)));
 
 	int i = 0;
 
