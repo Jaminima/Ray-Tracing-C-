@@ -3,6 +3,7 @@
 
 #include "Sphere.h"
 #include "Triangle.h"
+#include "Mesh.h"
 
 #include "List.h"
 
@@ -21,23 +22,26 @@ Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
 
 	while (I != 0x0) {
 		O = (SceneObject*)I->Obj;
+		O = O->HitObject(R);
 
-		THit = O->IntersectionDistance(R);
+		if (O != 0x0) {
+			THit = O->IntersectionDistance(R);
 
-		if (THit != -1.0f) {
-			rhit = O->CorrectDistance(R, THit);
+			if (THit != -1.0f) {
+				rhit = O->CorrectDistance(R, THit);
 
-			if (rhit < HitDistance || HitDistance == -1.0f) {
-				HitDistance = rhit;
+				if (rhit < HitDistance || HitDistance == -1.0f) {
+					HitDistance = rhit;
 
-				Color = O->Colour * (1.0f / Reflections);
+					Color = O->Colour * (1.0f / Reflections);
 
-				if (Reflections < 20) {
-					Ray* ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
-					Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
-					delete ReflectedRay;
+					if (Reflections < 20) {
+						Ray* ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
+						Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
+						delete ReflectedRay;
+					}
+
 				}
-
 			}
 		}
 
