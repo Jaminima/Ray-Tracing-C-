@@ -56,8 +56,8 @@ Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restr
 }
 
 void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned char rgb[]) {
-	Ray Rs[ViewWS];
-	unsigned int rgbTemp[MaxChunkSize * 3];
+	Ray* Rs = (Ray*)malloc(ViewWS*sizeof(Ray));
+	unsigned int* rgbTemp = (unsigned int*)malloc(MaxChunkSize*12);
 
 	float x = -ViewWidth;
 	int chunkPos = 0, memPos = 0, chunk = 0;
@@ -94,15 +94,18 @@ void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned c
 		
 		chunk++;
 	}
+
+	free(Rs);
+	free(rgbTemp);
 }
 
-unsigned char* RenderScene(SceneObject Objs[]) {
+unsigned char* RenderScene(SceneObject Objs[], int ObjsSize) {
 	int i = 0;
 
 	unsigned char* rgb = (unsigned char*)malloc(imageMemory);
 
 	for (float y = -ViewWidth; y < ViewWidth; y += ViewSteps, i++) {
-		RenderRow(y, i * ViewWS, Objs, 3, rgb);
+		RenderRow(y, i * ViewWS, Objs, ObjsSize, rgb);
 	}
 
 	return rgb;
