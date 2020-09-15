@@ -38,8 +38,9 @@ public:
 	}
 
 	Vec3 operator+= (Vec3 V) restrict(amp) {
-		Vec3 N(x + V.x, y + V.y, z + V.z);
-		return N;
+		x += V.x;
+		y += V.y;
+		z += V.z;
 	}
 
 	Vec3 operator* (int M) restrict(amp) {

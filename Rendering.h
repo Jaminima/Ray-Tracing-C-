@@ -39,7 +39,7 @@ Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restr
 					ClosestObj = i;
 					ClosestHit = TempHit;
 
-					Color = Objs[i].Colour * (1.0f / Reflections);
+					Color += Objs[i].Colour * (1.0f / Reflections);
 				}
 			}
 		}
