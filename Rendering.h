@@ -9,75 +9,58 @@
 
 #include <thread>
 
+#include "vec3.h"
+
+#include <amp.h>
+using namespace concurrency;
+
 const int ViewWidth = 10;
-const float ViewSteps = 0.01f;
-const int ViewWS = 2000;
+const float ViewSteps = 1.0f;
+const int ViewWS = 20;
 
-Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) restrict(amp) {
-	Vec3 Color(0, 0, 0);
-	float HitDistance = -1.0f, THit, rhit;
+//12 * pow(ViewWidth / ViewSteps, 2)
+const int imageMemory = 1200;
 
-	Item* I = Objs->Head;
-	SceneObject* O;
+void RenderRow(float y, int mStart, SceneObject Objs[], unsigned int rgb[]) {
+	Vec3 Rs[ViewWS] = {};
 
-	while (I != 0x0) {
-		O = (SceneObject*)I->Obj;
-
-		if (O != 0x0) {
-			THit = O->IntersectionDistance(R);
-
-			if (THit != -1.0f) {
-				rhit = O->CorrectDistance(R, THit);
-
-				if (rhit < HitDistance || HitDistance == -1.0f) {
-					HitDistance = rhit;
-
-					Color = O->Colour * (1.0f / Reflections);
-
-					if (Reflections < 20) {
-						Ray ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
-						Color += CalculateRayColour(&ReflectedRay, Objs, Reflections + 1);
-						//delete ReflectedRay;
-					}
-
-				}
-			}
-		}
-
-		I = I->Next;
-	}
-	return Color;
-}
-
-void RenderRow(float y, int i, List* Objs, unsigned char* rgb) {
-	Ray R;
-	Vec3 Color;
-
-	for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
-		R.Direction = Vec3(x, y, 20);
-
-		Color = CalculateRayColour(R, Objs);
-
-		rgb[i * 3] = Color.x;
-		rgb[i * 3 + 1] = Color.y;
-		rgb[i * 3 + 2] = Color.z;
-	}
-}
-
-unsigned char* RenderScene(List* Objs) {
 	int i = 0;
 
-	unsigned char* rgb = (unsigned char*)malloc(12 * pow(ViewWidth / ViewSteps, 2));
-
-	std::thread Threads[ViewWS];
-	std::thread tThread;
-
-	for (float y = -ViewWidth; y < ViewWidth; y += ViewSteps, i++) {
-		tThread = std::thread(RenderRow,y, i * ViewWS, Objs, rgb);
-		Threads[i].swap(tThread);
+	for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
+		Rs[i] = Vec3(x, y, -20);
 	}
 
-	for (i = 0; i < ViewWS; i++) Threads[i].join();
+	array_view<Vec3, 1> Rays(ViewWS, Rs);
+	array_view<unsigned int, 1> rgb_View(imageMemory, rgb);
 
-	return rgb;
+	parallel_for_each(
+		Rays.extent,
+		[=](index<1> idx) restrict(amp) {
+			Vec3 Color = Vec3(255, 0, 0);
+
+			idx += mStart;
+			idx *= 3;
+
+			rgb_View[idx] = Color.x;
+			rgb_View[idx + 1] = Color.y;
+			rgb_View[idx + 2] = Color.z;
+		}
+	);
+
+	rgb = rgb_View.data();
+}
+
+unsigned char* RenderScene(SceneObject Objs[]) {
+	int i = 0;
+
+	unsigned int rgb [imageMemory];
+	unsigned char rgbC[imageMemory];
+
+	for (float y = -ViewWidth; y < ViewWidth; y += ViewSteps, i++) {
+		RenderRow(y, i * ViewWS, Objs, rgb);
+	}
+
+	for (int j = 0; j < imageMemory; j++) rgbC[j] = rgb[j];
+
+	return rgbC;
 }
