@@ -16,7 +16,7 @@ const int ViewWidth = 10;
 const float ViewSteps = 0.01f;
 const int ViewWS = 2000;
 
-const int MaxChunkSize = 100;
+const int MaxChunkSize = 2000;
 
 //12 * pow(ViewWidth / ViewSteps, 2)
 const int imageMemory = 12000000;
@@ -86,9 +86,11 @@ void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned c
 			}
 		);
 
-		for (int k = 0; k < MaxChunkSize * 3; k++) {
+		std::copy(rgb_View.data(), rgb_View.data() + (chunkPos*3), &rgb[(mStart + memPos - chunkPos) * 3]);
+
+		/*for (int k = 0; k < MaxChunkSize * 3; k++) {
 			rgb[k + (mStart+memPos-chunkPos)*3] = rgb_View[k];
-		}
+		}*/
 		
 		chunk++;
 	}
