@@ -1,8 +1,6 @@
 #pragma once
 #include "SceneObject.h"
 
-#include "Sphere.h"
-#include "Triangle.h"
 #include "Mesh.h"
 
 #include "List.h"
@@ -25,18 +23,30 @@ Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restr
 	Vec3 Color(0, 0, 0);
 
 	int Reflections = 1;
-	float TempHit = 0, ClosestHit = -1;
+	int ClosestObj=0;
 
-	for (int i = 0; i < ObjsSize; i++) {
-		TempHit = Objs[i].IntersectionDistance(&R);
+	while (Reflections < 10 && ClosestObj!=-1) {
+		float TempHit = 0, ClosestHit = -1;
+		ClosestObj = -1;
 
-		if (TempHit != -1.0f) {
-			TempHit = Objs[i].CorrectDistance(&R,TempHit);
+		for (int i = 0; i < ObjsSize; i++) {
+			TempHit = Objs[i].IntersectionDistance(&R);
 
-			if (TempHit < ClosestHit || ClosestHit == -1) {
-				ClosestHit = TempHit;
-				Color = Objs[i].Colour * (1.0f / Reflections);
+			if (TempHit != -1.0f) {
+				TempHit = Objs[i].CorrectDistance(&R, TempHit);
+
+				if (TempHit < ClosestHit || ClosestHit == -1) {
+					ClosestObj = i;
+					ClosestHit = TempHit;
+
+					Color = Objs[i].Colour * (1.0f / Reflections);
+				}
 			}
+		}
+
+		if (ClosestObj != -1) {
+			R = Objs[ClosestObj].PointNormal(Objs[ClosestObj].IntersectionPoint(&R, ClosestHit), &R);
+			Reflections++;
 		}
 	}
 
