@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneObject.h"
+#include <amp_math.h>
 
 class Sphere : public SceneObject {
 public:
@@ -15,11 +16,11 @@ public:
 		this->radius = r;
 	}
 
-	bool Intersects(Ray* Ray) override {
+	bool Intersects(Ray* Ray) restrict(amp) {
 		return IntersectionDistance(Ray) >= 0;
 	}
 
-	float IntersectionDistance(Ray* Ray) override {
+	float IntersectionDistance(Ray* Ray) restrict(amp)  {
 		Vec3 oc = Ray->Origin - Center;
 
 		float a = Ray->Direction.dot(Ray->Direction),
@@ -32,17 +33,17 @@ public:
 			return -1.0;
 		}
 		else {
-			float d = (-b - sqrt(discriminant)) / (2.0 * a);
+			float d = (-b - concurrency::fast_math::sqrtf(discriminant)) / (2.0 * a);
 			if (d < 0) return -1.0;
 			else return d;
 		}
 	}
 
-	Ray* PointNormal(Vec3 Point, Ray* oRay) override {
-		Ray* nRay = new Ray();
+	Ray PointNormal(Vec3 Point, Ray* oRay) restrict(amp) {
+		Ray nRay;
 
-		nRay->Direction = -(2 * (oRay->Direction.dot(Point - Center)) * (Point - Center) - oRay->Direction);
-		nRay->Origin = Point;
+		nRay.Direction = (((Point - Center) * oRay->Direction.dot(Point - Center))* 2- oRay->Direction)*-1;
+		nRay.Origin = Point;
 
 		return nRay;
 	}

@@ -13,7 +13,7 @@ const int ViewWidth = 10;
 const float ViewSteps = 0.01f;
 const int ViewWS = 2000;
 
-Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
+Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) restrict(amp) {
 	Vec3 Color(0, 0, 0);
 	float HitDistance = -1.0f, THit, rhit;
 
@@ -22,7 +22,6 @@ Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
 
 	while (I != 0x0) {
 		O = (SceneObject*)I->Obj;
-		O = O->HitObject(R);
 
 		if (O != 0x0) {
 			THit = O->IntersectionDistance(R);
@@ -36,9 +35,9 @@ Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
 					Color = O->Colour * (1.0f / Reflections);
 
 					if (Reflections < 20) {
-						Ray* ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
-						Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
-						delete ReflectedRay;
+						Ray ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
+						Color += CalculateRayColour(&ReflectedRay, Objs, Reflections + 1);
+						//delete ReflectedRay;
 					}
 
 				}
@@ -57,7 +56,7 @@ void RenderRow(float y, int i, List* Objs, unsigned char* rgb) {
 	for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
 		R.Direction = Vec3(x, y, 20);
 
-		Color = CalculateRayColour(&R, Objs);
+		Color = CalculateRayColour(R, Objs);
 
 		rgb[i * 3] = Color.x;
 		rgb[i * 3 + 1] = Color.y;

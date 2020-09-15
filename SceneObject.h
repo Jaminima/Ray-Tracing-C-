@@ -4,6 +4,9 @@
 class Ray {
 public:
 	Vec3 Origin = Vec3(0, 0, -20), Direction;
+
+	Ray() {}
+	Ray() restrict(amp) {}
 };
 
 class SceneObject {
@@ -14,17 +17,17 @@ public:
 		this->Colour = Col;
 	}
 
-	virtual SceneObject* HitObject(Ray* Ray) { return this; }
+	//virtual SceneObject* HitObject(Ray* Ray) { return this; }
 
-	virtual float CorrectDistance(Ray* Ray, float D) { return D; }
+	float CorrectDistance(Ray* Ray, float D) restrict(amp) { return D; }
 
-	virtual bool Intersects(Ray* Ray) { return 0; }
+	bool Intersects(Ray* Ray) restrict(amp) { return 0; }
 
-	virtual float IntersectionDistance(Ray* Ray) { return 0; }
+	float IntersectionDistance(Ray* Ray) restrict(amp) { return 0; }
 
-	virtual Ray* PointNormal(Vec3 Point, Ray* oRay) { return 0x0; }
+	Ray PointNormal(Vec3 Point, Ray* oRay) restrict(amp) { return Ray(); }
 
-	Vec3 IntersectionPoint(Ray* Ray, float Distance) {
+	Vec3 IntersectionPoint(Ray* Ray, float Distance) restrict(amp) {
 		return Ray->Origin + (Ray->Direction * Distance);
 	}
 };
