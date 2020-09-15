@@ -1,5 +1,5 @@
 #pragma once
-#include "Triangle.h"
+#include "SceneObject.h"
 #include "List.h"
 
 class Mesh {

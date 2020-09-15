@@ -9,9 +9,9 @@ int main(int argc, char** argv)
 {
 
 	SceneObject Objs[] = {
-		Sphere(Vec3(4, 2, -5), Vec3(0, 255, 0), 4),
-		Sphere(Vec3(-4, 3, 4), Vec3(255, 0, 0), 4),
-		Sphere(Vec3(0, -5, 2), Vec3(0, 0, 255), 4)
+		SceneObject(Vec3(4, 2, -5), Vec3(0, 255, 0), 4),
+		SceneObject(Vec3(-4, 3, 4), Vec3(255, 0, 0), 4),
+		SceneObject(Vec3(0, -5, 2), Vec3(0, 0, 255), 4)
 	};
 
 	/*Mesh* M = new Mesh();
