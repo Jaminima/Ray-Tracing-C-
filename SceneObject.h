@@ -7,6 +7,9 @@ public:
 
 	Ray() {}
 	Ray() restrict(amp) {}
+
+	Ray(Vec3 O, Vec3 D) { Origin = O; Direction = D; }
+	Ray(Vec3 O, Vec3 D) restrict(amp) { Origin = O; Direction = D; }
 };
 
 class SceneObject {
