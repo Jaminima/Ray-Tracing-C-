@@ -1,84 +1,105 @@
 #pragma once
 #include "SceneObject.h"
 
-#include "Sphere.h"
-#include "Triangle.h"
 #include "Mesh.h"
 
 #include "List.h"
 
-#include <thread>
+#include "vec3.h"
+
+#include <amp.h>
+using namespace concurrency;
 
 const int ViewWidth = 10;
 const float ViewSteps = 0.01f;
 const int ViewWS = 2000;
 
-Vec3 CalculateRayColour(Ray* R, List* Objs, int Reflections = 1) {
+const int MaxChunkSize = 2000;
+
+//12 * pow(ViewWidth / ViewSteps, 2)
+const int imageMemory = 12000000;
+
+Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restrict(amp) {
 	Vec3 Color(0, 0, 0);
-	float HitDistance = -1.0f, THit, rhit;
 
-	Item* I = Objs->Head;
-	SceneObject* O;
+	int Reflections = 1;
+	int ClosestObj = 0;
 
-	while (I != 0x0) {
-		O = (SceneObject*)I->Obj;
-		O = O->HitObject(R);
+	while (Reflections < 100 && ClosestObj != -1) {
+		float TempHit = 0, ClosestHit = -1;
+		ClosestObj = -1;
 
-		if (O != 0x0) {
-			THit = O->IntersectionDistance(R);
+		for (int i = 0; i < ObjsSize; i++) {
+			TempHit = Objs[i].IntersectionDistance(&R);
 
-			if (THit != -1.0f) {
-				rhit = O->CorrectDistance(R, THit);
+			if (TempHit != -1.0f) {
+				TempHit = Objs[i].CorrectDistance(&R, TempHit);
 
-				if (rhit < HitDistance || HitDistance == -1.0f) {
-					HitDistance = rhit;
-
-					Color = O->Colour * (1.0f / Reflections);
-
-					if (Reflections < 20) {
-						Ray* ReflectedRay = O->PointNormal(O->IntersectionPoint(R, HitDistance), R);
-						Color += CalculateRayColour(ReflectedRay, Objs, Reflections + 1);
-						delete ReflectedRay;
-					}
-
+				if (TempHit < ClosestHit || ClosestHit == -1) {
+					ClosestObj = i;
+					ClosestHit = TempHit;
 				}
 			}
 		}
 
-		I = I->Next;
+		if (ClosestObj != -1) {
+			Color += Objs[ClosestObj].Colour * (1.0f / Reflections);
+
+			R = Objs[ClosestObj].PointNormal(Objs[ClosestObj].IntersectionPoint(&R, ClosestHit), &R);
+			Reflections++;
+		}
 	}
+
 	return Color;
 }
 
-void RenderRow(float y, int i, List* Objs, unsigned char* rgb) {
-	Ray R;
-	Vec3 Color;
+void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned char rgb[]) {
+	Ray* Rs = (Ray*)malloc(ViewWS * sizeof(Ray));
+	unsigned int* rgbTemp = (unsigned int*)malloc(MaxChunkSize * 12);
 
-	for (float x = -ViewWidth; x < ViewWidth; x += ViewSteps, i++) {
-		R.Direction = Vec3(x, y, 20);
+	float x = -ViewWidth;
+	int chunkPos = 0, memPos = 0, chunk = 0;
 
-		Color = CalculateRayColour(&R, Objs);
+	while (x < ViewWidth) {
+		chunkPos = 0;
+		for (; x < ViewWidth && chunkPos < MaxChunkSize; x += ViewSteps, chunkPos++, memPos++) {
+			Rs[chunkPos] = Ray(Vec3(0, 0, -20), Vec3(x, y, 20));
+		}
 
-		rgb[i * 3] = Color.x;
-		rgb[i * 3 + 1] = Color.y;
-		rgb[i * 3 + 2] = Color.z;
+		array_view<Ray, 1> Rays(ViewWS, Rs);
+		array_view<unsigned int, 1> rgb_View(MaxChunkSize * 3, rgbTemp);
+		array_view<SceneObject, 1> objs(ObjsSize, Objs);
+
+		parallel_for_each(
+			Rays.extent,
+			[=](index<1> idx) restrict(amp) {
+				Vec3 Color = CalculateRayColour(Rays[idx], objs, ObjsSize);
+
+				idx *= 3;
+
+				rgb_View[idx] = Color.x;
+				rgb_View[idx + 1] = Color.y;
+				rgb_View[idx + 2] = Color.z;
+			}
+		);
+
+		std::copy(rgb_View.data(), rgb_View.data() + (chunkPos * 3), &rgb[(mStart + memPos - chunkPos) * 3]);
+
+		chunk++;
 	}
+
+	free(Rs);
+	free(rgbTemp);
 }
 
-unsigned char* RenderScene(List* Objs) {
+unsigned char* RenderScene(SceneObject Objs[], int ObjsSize) {
 	int i = 0;
 
-	unsigned char* rgb = (unsigned char*)malloc(12 * pow(ViewWidth / ViewSteps, 2));
-
-	std::thread Threads[ViewWS];
-	std::thread tThread;
+	unsigned char* rgb = (unsigned char*)malloc(imageMemory);
 
 	for (float y = -ViewWidth; y < ViewWidth; y += ViewSteps, i++) {
-		tThread = std::thread(RenderRow,y, i * ViewWS, Objs, rgb);
-		Threads[i].swap(tThread);
+		RenderRow(y, i * ViewWS, Objs, ObjsSize, rgb);
 	}
-
-	for (i = 0; i < ViewWS; i++) Threads[i].join();
 
 	return rgb;
 }
