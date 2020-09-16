@@ -6,7 +6,7 @@ class Mesh {
 public:
 	List Triangles;
 
-	Mesh(){}
+	Mesh() {}
 
 	Mesh(List Triangles) { this->Triangles = Triangles; }
 };

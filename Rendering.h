@@ -5,8 +5,6 @@
 
 #include "List.h"
 
-#include <thread>
-
 #include "vec3.h"
 
 #include <amp.h>
@@ -25,9 +23,9 @@ Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restr
 	Vec3 Color(0, 0, 0);
 
 	int Reflections = 1;
-	int ClosestObj=0;
+	int ClosestObj = 0;
 
-	while (Reflections < 100 && ClosestObj!=-1) {
+	while (Reflections < 100 && ClosestObj != -1) {
 		float TempHit = 0, ClosestHit = -1;
 		ClosestObj = -1;
 
@@ -56,8 +54,8 @@ Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restr
 }
 
 void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned char rgb[]) {
-	Ray* Rs = (Ray*)malloc(ViewWS*sizeof(Ray));
-	unsigned int* rgbTemp = (unsigned int*)malloc(MaxChunkSize*12);
+	Ray* Rs = (Ray*)malloc(ViewWS * sizeof(Ray));
+	unsigned int* rgbTemp = (unsigned int*)malloc(MaxChunkSize * 12);
 
 	float x = -ViewWidth;
 	int chunkPos = 0, memPos = 0, chunk = 0;
@@ -69,7 +67,7 @@ void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned c
 		}
 
 		array_view<Ray, 1> Rays(ViewWS, Rs);
-		array_view<unsigned int, 1> rgb_View(MaxChunkSize*3, rgbTemp);
+		array_view<unsigned int, 1> rgb_View(MaxChunkSize * 3, rgbTemp);
 		array_view<SceneObject, 1> objs(ObjsSize, Objs);
 
 		parallel_for_each(
@@ -77,7 +75,6 @@ void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned c
 			[=](index<1> idx) restrict(amp) {
 				Vec3 Color = CalculateRayColour(Rays[idx], objs, ObjsSize);
 
-				//idx += mStart;
 				idx *= 3;
 
 				rgb_View[idx] = Color.x;
@@ -86,12 +83,8 @@ void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned c
 			}
 		);
 
-		std::copy(rgb_View.data(), rgb_View.data() + (chunkPos*3), &rgb[(mStart + memPos - chunkPos) * 3]);
+		std::copy(rgb_View.data(), rgb_View.data() + (chunkPos * 3), &rgb[(mStart + memPos - chunkPos) * 3]);
 
-		/*for (int k = 0; k < MaxChunkSize * 3; k++) {
-			rgb[k + (mStart+memPos-chunkPos)*3] = rgb_View[k];
-		}*/
-		
 		chunk++;
 	}
 

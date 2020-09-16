@@ -21,8 +21,8 @@ class SceneObject {
 public:
 	Vec3 Colour;
 
-	Type T; 
-	
+	Type T;
+
 	SceneObject(Vec3 Col) {
 		this->Colour = Col;
 	}
@@ -145,12 +145,12 @@ public:
 	}
 #pragma endregion
 
-	float CorrectDistance(Ray* Ray, float D) restrict(amp) { 
+	float CorrectDistance(Ray* Ray, float D) restrict(amp) {
 		if (T == 1) return Triangle_CorrectDistance(Ray, D);
 		return D;
 	}
 
-	bool Intersects(Ray* Ray) restrict(amp) { 
+	bool Intersects(Ray* Ray) restrict(amp) {
 		if (T == 0) return Sphere_Intersects(Ray);
 		if (T == 1) return Triangle_Intersects(Ray);
 	}
@@ -161,8 +161,8 @@ public:
 	}
 
 	Ray PointNormal(Vec3 Point, Ray* oRay) restrict(amp) {
-		if (T == 0) return Sphere_PointNormal(Point,oRay);
-		if (T == 1) return Triangle_PointNormal(Point,oRay);
+		if (T == 0) return Sphere_PointNormal(Point, oRay);
+		if (T == 1) return Triangle_PointNormal(Point, oRay);
 	}
 
 	Vec3 IntersectionPoint(Ray* Ray, float Distance) restrict(amp) {
