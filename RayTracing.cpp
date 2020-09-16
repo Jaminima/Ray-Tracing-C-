@@ -1,4 +1,5 @@
 #include "Rendering.h"
+#include "Aliasing.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -39,6 +40,8 @@ int main(int argc, char** argv)
 	};
 
 	unsigned char* rgb = RenderScene(Objs, 5);
+
+	FXAA(rgb);
 
 	stbi_write_png("image.png", 2 * ViewWidth / ViewSteps, 2 * ViewWidth / ViewSteps, 3, rgb, 0);
 }
