@@ -40,13 +40,13 @@ Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restr
 				if (TempHit < ClosestHit || ClosestHit == -1) {
 					ClosestObj = i;
 					ClosestHit = TempHit;
-
-					Color += Objs[i].Colour * (1.0f / Reflections);
 				}
 			}
 		}
 
 		if (ClosestObj != -1) {
+			Color += Objs[ClosestObj].Colour * (1.0f / Reflections);
+
 			R = Objs[ClosestObj].PointNormal(Objs[ClosestObj].IntersectionPoint(&R, ClosestHit), &R);
 			Reflections++;
 		}
