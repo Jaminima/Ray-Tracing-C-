@@ -132,13 +132,11 @@ public:
 
 		Vec3 N(V.y * V.z - V.z * W.y, V.z * W.x - V.x * W.z, V.x * W.y - V.y * W.x);
 
-		Ray oCopy;
-		oCopy.Direction = oRay->Direction * 1;
-		oCopy.Origin = oRay->Origin * 1;
+		nRay.Direction = oRay->Direction * 1;
 
-		oCopy.Direction.normalise();
+		nRay.Direction.normalise();
 
-		nRay.Direction = (oCopy.Direction + (oCopy.Direction * N * V) * 2) * -1;
+		nRay.Direction = (nRay.Direction + (nRay.Direction * N * V) * 2) * -1;
 		nRay.Origin = Point + (nRay.Direction * 0.0000001f);
 
 		return nRay;
