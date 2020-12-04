@@ -1,8 +1,6 @@
 #pragma once
 #include "SceneObject.h"
 
-#include "Mesh.h"
-
 #include "List.h"
 
 #include "vec3.h"
@@ -10,96 +8,82 @@
 #include <amp.h>
 using namespace concurrency;
 
-const int ViewWidth = 10;
-const float ViewSteps = 0.01f;
-const int ViewWS = 2000;
+const unsigned int px = 500, py = 500;
+const unsigned int px_half = px / 2, py_half = px / 2;
 
-const int MaxChunkSize = 2000;
+struct Color {
+public:
+	unsigned int rgba = 0x0;
 
-//12 * pow(ViewWidth / ViewSteps, 2)
-const int imageMemory = 12000000;
+	void SetR(unsigned int r) restrict(amp) { rgba &= 0x00FFFFFF; rgba |= (r & 0xFF) << 24; }
+	void SetG(unsigned int g) restrict(amp) { rgba &= 0xFF00FFFF; rgba |= (g & 0xFF) << 16; }
+	void SetB(unsigned int b) restrict(amp) { rgba &= 0xFFFF00FF; rgba |= (b & 0xFF) << 8; }
 
-Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restrict(amp) {
-	Vec3 Color(0, 0, 0);
-
-	int Reflections = 1;
-	int ClosestObj = 0;
-
-	while (Reflections < 100 && ClosestObj != -1) {
-		float TempHit = 0, ClosestHit = -1;
-		ClosestObj = -1;
-
-		for (int i = 0; i < ObjsSize; i++) {
-			TempHit = Objs[i].IntersectionDistance(&R);
-
-			if (TempHit != -1.0f) {
-				TempHit = Objs[i].CorrectDistance(&R, TempHit);
-
-				if (TempHit < ClosestHit || ClosestHit == -1) {
-					ClosestObj = i;
-					ClosestHit = TempHit;
-				}
-			}
-		}
-
-		if (ClosestObj != -1) {
-			Color += Objs[ClosestObj].Colour * (1.0f / Reflections);
-
-			R = Objs[ClosestObj].PointNormal(Objs[ClosestObj].IntersectionPoint(&R, ClosestHit), &R);
-			Reflections++;
-		}
+	Color(unsigned int r, unsigned int g, unsigned int b) {
 	}
 
-	return Color;
+	Color(unsigned int r, unsigned int g, unsigned int b) restrict(amp) {
+		SetR(r);
+		SetR(g);
+		SetR(b);
+	}
+};
+
+class Sphere {
+public:
+	float radius = 1;
+	Color color = Color(255,255,255);
+	Vec3 Center = Vec3(0,0,0);
+
+	Sphere(){}
+	Sphere() restrict(amp) {}
+};
+
+float RayHitDistance(Ray r, Sphere s) restrict(amp) {
+	Vec3 oc = r.Origin.operator-(s.Center);
+
+	float a = r.Direction.dot(r.Direction),
+		b = 2 * oc.dot(r.Direction),
+		c = oc.dot(oc) - (s.radius * s.radius);
+
+	float discriminant = (b * b - 4 * a * c);
+
+	if (discriminant < 0) {
+		return -1.0;
+	}
+	else {
+		float d = (-b - concurrency::fast_math::sqrtf(discriminant)) / (2.0 * a);
+		if (d < 0) return -1.0;
+		else return d;
+	}
 }
 
-void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned char rgb[]) {
-	Ray* Rs = (Ray*)malloc(ViewWS * sizeof(Ray));
-	unsigned int* rgbTemp = (unsigned int*)malloc(MaxChunkSize * 12);
-
-	float x = -ViewWidth;
-	int chunkPos = 0, memPos = 0, chunk = 0;
-
-	while (x < ViewWidth) {
-		chunkPos = 0;
-		for (; x < ViewWidth && chunkPos < MaxChunkSize; x += ViewSteps, chunkPos++, memPos++) {
-			Rs[chunkPos] = Ray(Vec3(0, 0, -20), Vec3(x, y, 20));
-		}
-
-		array_view<Ray, 1> Rays(ViewWS, Rs);
-		array_view<unsigned int, 1> rgb_View(MaxChunkSize * 3, rgbTemp);
-		array_view<SceneObject, 1> objs(ObjsSize, Objs);
-
-		parallel_for_each(
-			Rays.extent,
-			[=](index<1> idx) restrict(amp) {
-				Vec3 Color = CalculateRayColour(Rays[idx], objs, ObjsSize);
-
-				idx *= 3;
-
-				rgb_View[idx] = Color.x;
-				rgb_View[idx + 1] = Color.y;
-				rgb_View[idx + 2] = Color.z;
-			}
-		);
-
-		std::copy(rgb_View.data(), rgb_View.data() + (chunkPos * 3), &rgb[(mStart + memPos - chunkPos) * 3]);
-
-		chunk++;
-	}
-
-	free(Rs);
-	free(rgbTemp);
+bool RayHit(Ray r, Sphere s) restrict(amp) {
+	return RayHitDistance(r, s) >= 0;
 }
 
-unsigned char* RenderScene(SceneObject Objs[], int ObjsSize) {
-	int i = 0;
+Color RenderRay(index<2> idx) restrict(amp) {
+	float vx = (idx[1] / (float)px_half) - 1,
+		vy = (idx[0] / (float)px_half) - 1;
 
-	unsigned char* rgb = (unsigned char*)malloc(imageMemory);
+	if (RayHit(Ray(Vec3(0, 0, -10), Vec3(vx, vx, 1)), Sphere()))
+		return Color(255, 255, 255);
+	else return Color(0, 0, 0);
+}
 
-	for (float y = -ViewWidth; y < ViewWidth; y += ViewSteps, i++) {
-		RenderRow(y, i * ViewWS, Objs, ObjsSize, rgb);
-	}
+Color* RenderScene() {
+	Color* rgb = (Color*)malloc(px*py*sizeof(Color));
+
+	array_view<Color, 2> ColorView(px, py, rgb);
+
+	parallel_for_each(
+		ColorView.extent,
+		[=](index<2> idx) restrict(amp) {
+			ColorView[idx] = RenderRay(idx);
+		}
+	);
+
+	ColorView.synchronize();
 
 	return rgb;
 }

@@ -145,7 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="List.h" />
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="SceneObject.h" />
