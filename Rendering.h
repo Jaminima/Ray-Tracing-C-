@@ -8,30 +8,29 @@
 #include <amp.h>
 using namespace concurrency;
 
-const unsigned int px = 500, py = 500;
+const unsigned int px = 1000, py = 1000;
 const unsigned int px_half = px / 2, py_half = px / 2;
 
 struct Color {
 public:
-	unsigned int rgba = 0x0;
+	unsigned int rgba = 0xFF000000;
 
-	void SetR(unsigned int r) restrict(amp) { rgba &= 0x00FFFFFF; rgba |= (r & 0xFF) << 24; }
-	void SetG(unsigned int g) restrict(amp) { rgba &= 0xFF00FFFF; rgba |= (g & 0xFF) << 16; }
-	void SetB(unsigned int b) restrict(amp) { rgba &= 0xFFFF00FF; rgba |= (b & 0xFF) << 8; }
+	void SetR(unsigned int r) restrict(amp) { rgba = rgba | ((r & 0xFF) << 16); }
+	void SetG(unsigned int g) restrict(amp) { rgba = rgba | ((g & 0xFF) << 8); }
+	void SetB(unsigned int b) restrict(amp) { rgba = rgba | ((b & 0xFF)); }
 
 	Color(unsigned int r, unsigned int g, unsigned int b) {
+		rgba |= ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
 	}
 
 	Color(unsigned int r, unsigned int g, unsigned int b) restrict(amp) {
-		SetR(r);
-		SetR(g);
-		SetR(b);
+		rgba |= ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
 	}
 };
 
 class Sphere {
 public:
-	float radius = 1;
+	float radius = 4;
 	Color color = Color(255,255,255);
 	Vec3 Center = Vec3(0,0,0);
 
@@ -66,7 +65,7 @@ Color RenderRay(index<2> idx) restrict(amp) {
 	float vx = (idx[1] / (float)px_half) - 1,
 		vy = (idx[0] / (float)px_half) - 1;
 
-	if (RayHit(Ray(Vec3(0, 0, -10), Vec3(vx, vx, 1)), Sphere()))
+	if (RayHit(Ray(Vec3(0, 0, -10), Vec3(vx, vy, 1)), Sphere()))
 		return Color(255, 255, 255);
 	else return Color(0, 0, 0);
 }
@@ -79,7 +78,7 @@ Color* RenderScene() {
 	parallel_for_each(
 		ColorView.extent,
 		[=](index<2> idx) restrict(amp) {
-			ColorView[idx] = RenderRay(idx);
+			ColorView[idx[0]][idx[1]] = RenderRay(idx);
 		}
 	);
 

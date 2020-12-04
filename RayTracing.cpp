@@ -32,5 +32,5 @@ int main(int argc, char** argv)
 
 	Color* rgb = RenderScene();
 
-	stbi_write_png("image.png", px, px, 3, rgb, 0);
+	stbi_write_png("image.png", px, px, 4, rgb, 0);
 }
