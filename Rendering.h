@@ -1,105 +1,85 @@
 #pragma once
-#include "SceneObject.h"
-
-#include "Mesh.h"
-
-#include "List.h"
-
-#include "vec3.h"
-
+#include "Sphere.h"
+#include "Const.h"
 #include <amp.h>
 using namespace concurrency;
 
-const int ViewWidth = 10;
-const float ViewSteps = 0.01f;
-const int ViewWS = 2000;
+#include "GL/glut.h"
+#include "GL/freeglut.h"
 
-const int MaxChunkSize = 2000;
+Color RenderRay(Ray r, array_view<Sphere, 1> spheres) restrict(amp) {
+	Color c(0, 0, 0);
+	float LastHit;
+	Ray hitRay;
+	int hitSphere = 0;
+	unsigned int reflection = 1;
 
-//12 * pow(ViewWidth / ViewSteps, 2)
-const int imageMemory = 12000000;
+	while (hitSphere != -1) {
+		hitSphere = -1;
+		LastHit = 0xFFFFFFFF;
 
-Vec3 CalculateRayColour(Ray R, array_view<SceneObject> Objs, int ObjsSize) restrict(amp) {
-	Vec3 Color(0, 0, 0);
+		for (unsigned int i = 0; i < spheres.extent.size(); i++) {
+			float RayHit = spheres[i].RayHitDistance(r);
 
-	int Reflections = 1;
-	int ClosestObj = 0;
-
-	while (Reflections < 100 && ClosestObj != -1) {
-		float TempHit = 0, ClosestHit = -1;
-		ClosestObj = -1;
-
-		for (int i = 0; i < ObjsSize; i++) {
-			TempHit = Objs[i].IntersectionDistance(&R);
-
-			if (TempHit != -1.0f) {
-				TempHit = Objs[i].CorrectDistance(&R, TempHit);
-
-				if (TempHit < ClosestHit || ClosestHit == -1) {
-					ClosestObj = i;
-					ClosestHit = TempHit;
-				}
+			if (RayHit > 0 && RayHit < LastHit) {
+				hitSphere = i;
+				hitRay = r;
+				LastHit = RayHit;
 			}
 		}
 
-		if (ClosestObj != -1) {
-			Color += Objs[ClosestObj].Colour * (1.0f / Reflections);
-
-			R = Objs[ClosestObj].PointNormal(Objs[ClosestObj].IntersectionPoint(&R, ClosestHit), &R);
-			Reflections++;
-		}
-	}
-
-	return Color;
-}
-
-void RenderRow(float y, int mStart, SceneObject Objs[], int ObjsSize, unsigned char rgb[]) {
-	Ray* Rs = (Ray*)malloc(ViewWS * sizeof(Ray));
-	unsigned int* rgbTemp = (unsigned int*)malloc(MaxChunkSize * 12);
-
-	float x = -ViewWidth;
-	int chunkPos = 0, memPos = 0, chunk = 0;
-
-	while (x < ViewWidth) {
-		chunkPos = 0;
-		for (; x < ViewWidth && chunkPos < MaxChunkSize; x += ViewSteps, chunkPos++, memPos++) {
-			Rs[chunkPos] = Ray(Vec3(0, 0, -20), Vec3(x, y, 20));
+		if (hitSphere != -1) {
+			c = c + (spheres[hitSphere].color * (1.0f / reflection));
+			r = spheres[hitSphere].Sphere_PointNormal(spheres[hitSphere].IntersectionPoint(&hitRay, LastHit), &hitRay);
 		}
 
-		array_view<Ray, 1> Rays(ViewWS, Rs);
-		array_view<unsigned int, 1> rgb_View(MaxChunkSize * 3, rgbTemp);
-		array_view<SceneObject, 1> objs(ObjsSize, Objs);
-
-		parallel_for_each(
-			Rays.extent,
-			[=](index<1> idx) restrict(amp) {
-				Vec3 Color = CalculateRayColour(Rays[idx], objs, ObjsSize);
-
-				idx *= 3;
-
-				rgb_View[idx] = Color.x;
-				rgb_View[idx + 1] = Color.y;
-				rgb_View[idx + 2] = Color.z;
-			}
-		);
-
-		std::copy(rgb_View.data(), rgb_View.data() + (chunkPos * 3), &rgb[(mStart + memPos - chunkPos) * 3]);
-
-		chunk++;
+		reflection++;
 	}
 
-	free(Rs);
-	free(rgbTemp);
+	return c;
 }
 
-unsigned char* RenderScene(SceneObject Objs[], int ObjsSize) {
-	int i = 0;
+Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, Camera cam) restrict(amp) {
+	float vx = (idx[1] / (float)px_half) - 1,
+		vy = (idx[0] / (float)px_half) - 1;
 
-	unsigned char* rgb = (unsigned char*)malloc(imageMemory);
+	vx *= cam.fov;
+	vy *= cam.fov;
 
-	for (float y = -ViewWidth; y < ViewWidth; y += ViewSteps, i++) {
-		RenderRow(y, i * ViewWS, Objs, ObjsSize, rgb);
-	}
+	Vec3 Direction = Vec3(vx, vy, 1);
+
+	Direction += cam.Angle;
+	Direction.normalise();
+
+	Ray r(cam.Position, Direction);
+	return RenderRay(r, spheres);
+}
+
+Sphere spheres[3]{ Sphere(), Sphere(), Sphere() };
+
+Color* RenderScene(Color* rgb) {
+	spheres[0].Center = Vec3(5, 0, 0);
+	spheres[0].color = Color(0, 255, 0);
+
+	spheres[1].Center = Vec3(5, 0, 5);
+	spheres[1].color = Color(255, 0, 0);
+
+	spheres[2].Center = Vec3(-5, 0, -5);
+	spheres[2].color = Color(0, 0, 255);
+
+	array_view<Color, 2> ColorView(px, py, rgb);
+	array_view<Sphere, 1> SphereView(3, spheres);
+
+	Camera cam = mainCamera;
+
+	parallel_for_each(
+		ColorView.extent,
+		[=](index<2> idx) restrict(amp) {
+			ColorView[idx[0]][idx[1]] = RenderPixel(idx, SphereView, cam);
+		}
+	);
+
+	ColorView.synchronize();
 
 	return rgb;
 }

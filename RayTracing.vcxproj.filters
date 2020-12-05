@@ -26,9 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SceneObject.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="vec3.h">
       <Filter>Header Files\Librarys</Filter>
     </ClInclude>
@@ -44,11 +41,46 @@
     <ClInclude Include="Rendering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="Color.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Const.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Aliasing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\dynamic\freeglut.lib">
+      <Filter>Resource Files</Filter>
+    </Library>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\ltcg\freeglut.lib">
+      <Filter>Resource Files</Filter>
+    </Library>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\static\freeglut.lib">
+      <Filter>Resource Files</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Debug\dynamic\freeglut.dll">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Release\dynamic\freeglut.dll" />
   </ItemGroup>
 </Project>

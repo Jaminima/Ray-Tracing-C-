@@ -1,10 +1,9 @@
-#include "Rendering.h"
-#include "Aliasing.h"
+#include "Window.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+//#define STB_IMAGE_IMPLEMENTATION
+//#include "stb_image.h"
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#include "stb_image_write.h"
 
 bool pick_accelerator()
 {
@@ -31,17 +30,11 @@ int main(int argc, char** argv)
 {
 	pick_accelerator();
 
-	SceneObject Objs[] = {
-		SceneObject(Vec3(4, 2, -5), Vec3(0, 255, 0), 4),
-		SceneObject(Vec3(-4, 3, 4), Vec3(255, 0, 0), 4),
-		SceneObject(Vec3(0, -5, 2), Vec3(0, 0, 255), 4),
-		SceneObject(Vec3(0, -3, 2), Vec3(3, 0, -5), Vec3(-3, 0, 4), Vec3(255, 0, 0)),
-		SceneObject(Vec3(-10, -8, 0), Vec3(-10, 8, 0), Vec3(00, 0, 20), Vec3(0, 120, 0))
-	};
+	rgb = (Color*)malloc(px * py * sizeof(Color));
 
-	unsigned char* rgb = RenderScene(Objs, 5);
+	//stbi_write_png("image.png", px, px, 4, rgb, 0);
 
-	FXAA(rgb);
+	SetupFrame(argc, argv);
 
-	stbi_write_png("image.png", 2 * ViewWidth / ViewSteps, 2 * ViewWidth / ViewSteps, 3, rgb, 0);
+	while (true) {}
 }
