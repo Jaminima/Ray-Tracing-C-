@@ -4,40 +4,38 @@
 
 using namespace concurrency::fast_math;
 
-void FXAA(unsigned char* rgb) {
-	array_view<unsigned int> rgbData(imageMemory/4, (unsigned int*)rgb);
+const int fxaa_center = 9,
+fxaa_adjacent = 2,
+fxaa_corner = 1,
+fxaa_sum = fxaa_center + (fxaa_adjacent * 4) + (fxaa_corner * 4);
 
-	unsigned int PreRow = ViewWS * 3 / 4;
+
+void FXAA(Color* rgb) {
+	float fxaa_div = 1.0f / fxaa_sum;
+
+	array_view<Color,2> rgbData(px, py, rgb);
 
 	parallel_for_each(
 		rgbData.extent,
-		[=](index<1>i) restrict(amp) {
-			unsigned int res = 0;
+		[=](index<2>idx) restrict(amp) {
+			Vec3 aaColor(0, 0, 0);
 
-			for (unsigned int k = 0; k < 4; k++) {
-				unsigned int T = (rgbData[i]>>8*k) & 0xFF;
+			aaColor += rgbData[idx].GetRGB() * fxaa_center;
 
-				T += (rgbData[i - PreRow] >> 8 * k) & 0xFF;
-				T += (rgbData[i + PreRow] >> 8 * k) & 0xFF;
+			aaColor += rgbData[idx[0]][idx[1]+1].GetRGB() * fxaa_adjacent;
+			aaColor += rgbData[idx[0]][idx[1]-1].GetRGB() * fxaa_adjacent;
+			aaColor += rgbData[idx[0]+1][idx[1]].GetRGB() * fxaa_adjacent;
+			aaColor += rgbData[idx[0]-1][idx[1]].GetRGB() * fxaa_adjacent;
 
-				T += (rgbData[i] >> 8 * (k+4)) & 0xFF;
-				T += (rgbData[i] >> 8 * (k+4)) & 0xFF;
+			aaColor += rgbData[idx[0] + 1][idx[1] + 1].GetRGB() * fxaa_corner;
+			aaColor += rgbData[idx[0] - 1][idx[1] + 1].GetRGB() * fxaa_corner;
+			aaColor += rgbData[idx[0] + 1][idx[1] - 1].GetRGB() * fxaa_corner;
+			aaColor += rgbData[idx[0] - 1][idx[1] - 1].GetRGB() * fxaa_corner;
 
-				T += (rgbData[i - PreRow] >> 8 * (k - 4)) & 0xFF;
-				T += (rgbData[i + PreRow] >> 8 * (k - 4)) & 0xFF;
+			aaColor = aaColor * fxaa_div;
 
-				T += (rgbData[i - PreRow] >> 8 * (k + 4)) & 0xFF;
-				T += (rgbData[i + PreRow] >> 8 * (k + 4)) & 0xFF;
-
-				T /= 9;
-
-				res += T << (k * 8);
-			}
-
-			rgbData[i] = res;
+			rgbData[idx] = Color(aaColor.x, aaColor.y, aaColor.z);
 		});
 
 	rgbData.synchronize();
-
-	//std::copy(rgbData.data(), rgbData.data() + imageMemory/4, rgb);
 }

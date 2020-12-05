@@ -1,9 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include "Rendering.h"
-
-#include <chrono>
-using namespace std::chrono;
+#include "Aliasing.h"
 
 Color* rgb;
 
@@ -17,16 +15,18 @@ void triggerReDraw() {
 	//mainCamera.Angle.x -= 0.001f;
 	//spheres[0].Center.z+= 0.01f;
 
-	high_resolution_clock::time_point before = high_resolution_clock::now();
+	clock_t start = clock();
 
 	RenderScene(rgb);
+	FXAA(rgb);
 
 	glutPostRedisplay();
 
-	high_resolution_clock::time_point after = high_resolution_clock::now();
-	duration<double> ns = after - before;
+	clock_t end = clock();
 
-	printf_s("Frame took %d ns\n", ns);
+	clock_t ms = end - start;
+
+	printf_s("Frame took %d ms\n", ms);
 }
 
 void SetupFrame(int argc, char** argv) {
