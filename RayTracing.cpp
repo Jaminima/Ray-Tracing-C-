@@ -26,6 +26,8 @@ bool pick_accelerator()
 	return success;
 }
 
+
+
 int main(int argc, char** argv)
 {
 	pick_accelerator();
@@ -33,6 +35,17 @@ int main(int argc, char** argv)
 	rgb = (Color*)malloc(px * py * sizeof(Color));
 
 	//stbi_write_png("image.png", px, px, 4, rgb, 0);
+
+	spheres = new Sphere[3]{ Sphere(), Sphere(), Sphere() };
+
+	spheres[0].Center = Vec3(5, -5, 0);
+	spheres[0].color = Color(0, 255, 0);
+
+	spheres[1].Center = Vec3(5, 5, 5);
+	spheres[1].color = Color(255, 0, 0);
+
+	spheres[2].Center = Vec3(-5, 0, -5);
+	spheres[2].color = Color(0, 0, 255);
 
 	SetupFrame(argc, argv);
 

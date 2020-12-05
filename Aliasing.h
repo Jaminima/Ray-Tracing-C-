@@ -2,8 +2,6 @@
 #include "Rendering.h"
 #include <amp_math.h>
 
-using namespace concurrency::fast_math;
-
 const int fxaa_center = 9,
 fxaa_adjacent = 2,
 fxaa_corner = 1,

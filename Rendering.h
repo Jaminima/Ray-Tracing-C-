@@ -55,18 +55,9 @@ Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, Camera cam) restr
 	return RenderRay(r, spheres);
 }
 
-Sphere spheres[3]{ Sphere(), Sphere(), Sphere() };
+Sphere* spheres;
 
 Color* RenderScene(Color* rgb) {
-	spheres[0].Center = Vec3(5, 0, 0);
-	spheres[0].color = Color(0, 255, 0);
-
-	spheres[1].Center = Vec3(5, 0, 5);
-	spheres[1].color = Color(255, 0, 0);
-
-	spheres[2].Center = Vec3(-5, 0, -5);
-	spheres[2].color = Color(0, 0, 255);
-
 	array_view<Color, 2> ColorView(px, py, rgb);
 	array_view<Sphere, 1> SphereView(3, spheres);
 

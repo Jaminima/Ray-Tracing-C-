@@ -5,6 +5,9 @@
 
 Color* rgb;
 
+unsigned int framesInSec = 0;
+time_t startTime = clock();
+
 void drawFrame()
 {
 	glDrawPixels(px, py, GL_RGBA, GL_UNSIGNED_BYTE, rgb);
@@ -13,20 +16,20 @@ void drawFrame()
 
 void triggerReDraw() {
 	//mainCamera.Angle.x -= 0.001f;
-	//spheres[0].Center.z+= 0.01f;
+	mainCamera.Position.z += 0.01f;
 
-	clock_t start = clock();
+	framesInSec++;
 
 	RenderScene(rgb);
-	FXAA(rgb);
+	//FXAA(rgb);
 
 	glutPostRedisplay();
 
-	clock_t end = clock();
-
-	clock_t ms = end - start;
-
-	printf_s("Frame took %d ms\n", ms);
+	if (clock() - startTime >= 1000) {
+		printf_s("You averaged %d fps\n", framesInSec);
+		framesInSec = 0;
+		startTime = clock();
+	}
 }
 
 void SetupFrame(int argc, char** argv) {
