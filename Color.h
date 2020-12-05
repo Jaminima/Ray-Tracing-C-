@@ -19,12 +19,12 @@ public:
 	Color operator+(Color c) restrict(amp) {
 		unsigned int r1 = (rgba >> 16) & 0xFF,
 			g1 = (rgba >> 8) & 0xFF,
-			b1= rgba & 0xFF;
+			b1 = rgba & 0xFF;
 
 		unsigned int r2 = (c.rgba >> 16) & 0xFF,
 			g2 = (c.rgba >> 8) & 0xFF,
 			b2 = c.rgba & 0xFF;
-		
+
 		return Color(r1 + r2, g1 + g2, b1 + b2);
 	}
 

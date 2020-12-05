@@ -29,7 +29,7 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres) restrict(amp) {
 		}
 
 		if (hitSphere != -1) {
-			c = c + (spheres[hitSphere].color * (1.0f/reflection));
+			c = c + (spheres[hitSphere].color * (1.0f / reflection));
 			r = spheres[hitSphere].Sphere_PointNormal(spheres[hitSphere].IntersectionPoint(&hitRay, LastHit), &hitRay);
 		}
 
@@ -39,7 +39,7 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres) restrict(amp) {
 	return c;
 }
 
-Color RenderPixel(index<2> idx, array_view<Sphere,1> spheres, Camera cam) restrict(amp) {
+Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, Camera cam) restrict(amp) {
 	float vx = (idx[1] / (float)px_half) - 1,
 		vy = (idx[0] / (float)px_half) - 1;
 
@@ -51,15 +51,13 @@ Color RenderPixel(index<2> idx, array_view<Sphere,1> spheres, Camera cam) restri
 	Direction += cam.Angle;
 	Direction.normalise();
 
-	Ray r(cam.Position,Direction);
-	return RenderRay(r,spheres);
+	Ray r(cam.Position, Direction);
+	return RenderRay(r, spheres);
 }
-
 
 Sphere spheres[3]{ Sphere(), Sphere(), Sphere() };
 
 Color* RenderScene(Color* rgb) {
-
 	spheres[0].Center = Vec3(5, 0, 0);
 	spheres[0].color = Color(0, 255, 0);
 
@@ -67,7 +65,7 @@ Color* RenderScene(Color* rgb) {
 	spheres[1].color = Color(255, 0, 0);
 
 	spheres[2].Center = Vec3(-5, 0, -5);
-	spheres[2].color = Color(0,0,255);
+	spheres[2].color = Color(0, 0, 255);
 
 	array_view<Color, 2> ColorView(px, py, rgb);
 	array_view<Sphere, 1> SphereView(3, spheres);
@@ -85,4 +83,3 @@ Color* RenderScene(Color* rgb) {
 
 	return rgb;
 }
-

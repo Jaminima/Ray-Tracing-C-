@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
 	//stbi_write_png("image.png", px, px, 4, rgb, 0);
 
-	SetupFrame(argc,argv);
+	SetupFrame(argc, argv);
 
-	while (true) { }
+	while (true) {}
 }
