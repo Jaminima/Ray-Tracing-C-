@@ -4,7 +4,7 @@
 
 class Camera {
 public:
-	Vec3 Position = Vec3(0, 0, 0);
+	Vec3 Position = Vec3(0, 0, -15);
 	Vec3 Angle = Vec3(0, 0, 0);
 
 	int degreesFOV = 90; //90 Normal, 180 Wide, 180> 180 but W---I---D---E

@@ -144,6 +144,7 @@
     <ClCompile Include="RayTracing.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="List.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="vec3.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
