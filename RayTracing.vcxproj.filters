@@ -26,9 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SceneObject.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="vec3.h">
       <Filter>Header Files\Librarys</Filter>
     </ClInclude>
@@ -59,9 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Release\dynamic\freeglut.dll">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\dynamic\freeglut.lib">
@@ -78,5 +72,6 @@
     <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Debug\dynamic\freeglut.dll">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Release\dynamic\freeglut.dll" />
   </ItemGroup>
 </Project>

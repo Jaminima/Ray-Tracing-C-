@@ -1,5 +1,9 @@
 #pragma once
 #include "vec3.h"
+#include "Const.h"
+
+#include <amp.h>
+using namespace concurrency;
 
 class Ray {
 public:

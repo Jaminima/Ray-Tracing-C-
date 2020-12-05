@@ -11,18 +11,18 @@ using namespace concurrency;
 class Sphere {
 public:
 	float radius = 3;
-	Color color = Color(255, 0, 255);
-	Vec3 Center = Vec3(5, 0, 0);
+	Color color = Color(255, 255, 255);
+	Vec3 Center = Vec3(0, 0, 0);
 
 	Sphere() {}
 	Sphere() restrict(amp) {}
 
-	float RayHitDistance(Ray r, Sphere s) restrict(amp) {
-		Vec3 oc = r.Origin.operator-(s.Center);
+	float RayHitDistance(Ray r) restrict(amp) {
+		Vec3 oc = r.Origin.operator-(Center);
 
 		float a = r.Direction.dot(r.Direction),
 			b = 2 * oc.dot(r.Direction),
-			c = oc.dot(oc) - (s.radius * s.radius);
+			c = oc.dot(oc) - (radius * radius);
 
 		float discriminant = (b * b - 4 * a * c);
 
@@ -36,17 +36,21 @@ public:
 		}
 	}
 
-	bool RayHit(Ray r, Sphere s) restrict(amp) {
-		return RayHitDistance(r, s) >= 0;
+	bool RayHit(Ray r) restrict(amp) {
+		return RayHitDistance(r) >= 0;
 	}
 
-	Color RenderRay(index<2> idx) restrict(amp) {
-		float vx = (idx[1] / (float)px_half) - 1,
-			vy = (idx[0] / (float)px_half) - 1;
+	Vec3 IntersectionPoint(Ray* Ray, float Distance) restrict(amp) {
+		return Ray->Origin + (Ray->Direction * Distance);
+	}
 
-		if (Sphere().RayHit(Ray(Vec3(0, 0, -10), Vec3(vx, vy, 1)), Sphere()))
-			return Color(255, 255, 255);
-		else return Color(0, 0, 0);
+	Ray Sphere_PointNormal(Vec3 Point, Ray* oRay) restrict(amp) {
+		Ray nRay;
+
+		nRay.Direction = (((Point - Center) * oRay->Direction.dot(Point - Center)) * 2 - oRay->Direction) * -1;
+		nRay.Origin = Point;
+
+		return nRay;
 	}
 };
 

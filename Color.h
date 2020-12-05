@@ -15,4 +15,8 @@ public:
 	Color(unsigned int r, unsigned int g, unsigned int b) restrict(amp) {
 		rgba |= ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
 	}
+
+	void operator+=(Color c) restrict(amp) {
+		rgba |= c.rgba;
+	}
 };
