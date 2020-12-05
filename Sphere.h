@@ -10,9 +10,9 @@ using namespace concurrency;
 
 class Sphere {
 public:
-	float radius = 4;
-	Color color = Color(255, 255, 255);
-	Vec3 Center = Vec3(0, 0, 0);
+	float radius = 3;
+	Color color = Color(255, 0, 255);
+	Vec3 Center = Vec3(5, 0, 0);
 
 	Sphere() {}
 	Sphere() restrict(amp) {}

@@ -1,5 +1,6 @@
 #include "Rendering.h"
 
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -30,7 +31,11 @@ int main(int argc, char** argv)
 {
 	pick_accelerator();
 
-	Color* rgb = RenderScene();
+	rgb = (Color*)malloc(px * py * sizeof(Color));
 
-	stbi_write_png("image.png", px, px, 4, rgb, 0);
+	//stbi_write_png("image.png", px, px, 4, rgb, 0);
+
+	SetupFrame(argc,argv);
+
+	while (true) { }
 }
