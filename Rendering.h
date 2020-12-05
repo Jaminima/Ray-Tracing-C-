@@ -51,8 +51,10 @@ Color RenderPixel(index<2> idx, array_view<Sphere,1> spheres, Vec3 Camera) restr
 	return RenderRay(r,spheres);
 }
 
+
+Sphere spheres[3]{ Sphere(), Sphere(), Sphere() };
+
 Color* RenderScene(Color* rgb) {
-	Sphere spheres[3]{ Sphere(), Sphere()};
 
 	spheres[0].color = Color(0, 255, 0);
 
@@ -89,6 +91,7 @@ void drawFrame()
 
 void triggerReDraw() {
 	mainCamera.x += 0.01f;
+	spheres[0].Center.z+= 0.01f;
 
 	DWORD start = timeGetTime();
 	RenderScene(rgb);
