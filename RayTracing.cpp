@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 	//stbi_write_png("image.png", px, px, 4, rgb, 0);
 
 	spheres = new Sphere[3]{ Sphere(), Sphere(), Sphere() };
+	lights = new Light[1]{ Light() };
 
 	spheres[0].Center = Vec3(5, -5, 0);
 	spheres[0].color = Color(0, 255, 0);

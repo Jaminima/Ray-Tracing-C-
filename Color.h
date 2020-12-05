@@ -3,7 +3,7 @@
 
 struct Color {
 public:
-	unsigned int rgba = 0xFF000000;
+	unsigned int rgba = 0x0F000000;
 
 	void SetR(unsigned int r) restrict(amp) { rgba = rgba | ((r & 0xFF) << 16); }
 	void SetG(unsigned int g) restrict(amp) { rgba = rgba | ((g & 0xFF) << 8); }

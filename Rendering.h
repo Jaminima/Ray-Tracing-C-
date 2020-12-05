@@ -1,4 +1,5 @@
 #pragma once
+#include "Light.h"
 #include "Sphere.h"
 #include "Const.h"
 #include <amp.h>
@@ -7,7 +8,7 @@ using namespace concurrency;
 #include "GL/glut.h"
 #include "GL/freeglut.h"
 
-Color RenderRay(Ray r, array_view<Sphere, 1> spheres) restrict(amp) {
+Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light,1> lights) restrict(amp) {
 	Color c(0, 0, 0);
 	float LastHit;
 	Ray hitRay;
@@ -29,8 +30,16 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres) restrict(amp) {
 		}
 
 		if (hitSphere != -1) {
-			c = c + (spheres[hitSphere].color * (1.0f / reflection));
-			r = spheres[hitSphere].Sphere_PointNormal(spheres[hitSphere].IntersectionPoint(&hitRay, LastHit), &hitRay);
+			Vec3 impact = spheres[hitSphere].IntersectionPoint(&hitRay, LastHit);
+
+			Vec3 delta = lights[0].Position - impact;
+			float distance = fast_math::sqrtf(delta.dot(delta));
+
+			float lightmul = (1 / (distance * lights[0].FadeOff));
+			if (lightmul > 1) lightmul = 1;
+
+			c = c + (spheres[hitSphere].color * (1.0f / reflection) * lightmul);
+			r = spheres[hitSphere].Sphere_PointNormal(impact, &hitRay);
 		}
 
 		reflection++;
@@ -39,7 +48,7 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres) restrict(amp) {
 	return c;
 }
 
-Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, Camera cam) restrict(amp) {
+Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light, 1> lights, Camera cam) restrict(amp) {
 	float vx = (idx[1] / (float)px_half) - 1,
 		vy = (idx[0] / (float)px_half) - 1;
 
@@ -52,21 +61,23 @@ Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, Camera cam) restr
 	Direction.normalise();
 
 	Ray r(cam.Position, Direction);
-	return RenderRay(r, spheres);
+	return RenderRay(r, spheres, lights);
 }
 
 Sphere* spheres;
+Light* lights;
 
 Color* RenderScene(Color* rgb) {
 	array_view<Color, 2> ColorView(px, py, rgb);
 	array_view<Sphere, 1> SphereView(3, spheres);
+	array_view<Light, 1> LightView(1, lights);
 
 	Camera cam = mainCamera;
 
 	parallel_for_each(
 		ColorView.extent,
 		[=](index<2> idx) restrict(amp) {
-			ColorView[idx[0]][idx[1]] = RenderPixel(idx, SphereView, cam);
+			ColorView[idx[0]][idx[1]] = RenderPixel(idx, SphereView, LightView, cam);
 		}
 	);
 
