@@ -43,11 +43,11 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres) restrict(amp) {
 	return c;
 }
 
-Color RenderPixel(index<2> idx, array_view<Sphere,1> spheres) restrict(amp) {
+Color RenderPixel(index<2> idx, array_view<Sphere,1> spheres, Vec3 Camera) restrict(amp) {
 	float vx = (idx[1] / (float)px_half) - 1,
 		vy = (idx[0] / (float)px_half) - 1;
 
-	Ray r(Vec3(0,0,-10),Vec3(vx, vy, 1));
+	Ray r(Camera,Vec3(vx, vy, 1));
 	return RenderRay(r,spheres);
 }
 
@@ -65,10 +65,12 @@ Color* RenderScene(Color* rgb) {
 	array_view<Color, 2> ColorView(px, py, rgb);
 	array_view<Sphere, 1> SphereView(3, spheres);
 
+	Vec3 Camera = Vec3(mainCamera);
+
 	parallel_for_each(
 		ColorView.extent,
 		[=](index<2> idx) restrict(amp) {
-			ColorView[idx[0]][idx[1]] = RenderPixel(idx, SphereView);
+			ColorView[idx[0]][idx[1]] = RenderPixel(idx, SphereView, Camera);
 		}
 	);
 
@@ -86,6 +88,8 @@ void drawFrame()
 }
 
 void triggerReDraw() {
+	mainCamera.x += 0.01f;
+
 	DWORD start = timeGetTime();
 	RenderScene(rgb);
 	DWORD end = timeGetTime();
