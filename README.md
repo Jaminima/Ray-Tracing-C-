@@ -2,7 +2,7 @@
 
 ### What does this do?
 
-Using [AMP]([C++ AMP Overview | Microsoft Docs](https://docs.microsoft.com/en-us/cpp/parallel/amp/cpp-amp-overview?view=msvc-160)) we can process a bunch of rays at once.
+Using [AMP](https://docs.microsoft.com/en-us/cpp/parallel/amp/cpp-amp-overview?view=msvc-160) we can process a bunch of rays at once.
 
 We use this to render a scene (currently just balls), but it can be whatever.
 
