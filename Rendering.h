@@ -50,10 +50,10 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light,1> lights
 
 Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light, 1> lights, Camera cam) restrict(amp) {
 	float vx = (idx[1] / (float)px_half) - 1,
-		vy = (idx[0] / (float)px_half) - 1;
+		vy = (idx[0] / (float)py_half) - 1;
 
 	vx *= cam.fov;
-	vy *= cam.fov;
+	vy *= cam.fov * (py/(float)px);
 
 	Vec3 Direction = Vec3(vx, vy, 1);
 
@@ -68,7 +68,7 @@ Sphere* spheres;
 Light* lights;
 
 Color* RenderScene(Color* rgb) {
-	array_view<Color, 2> ColorView(px, py, rgb);
+	array_view<Color, 2> ColorView(py, px, rgb);
 	array_view<Sphere, 1> SphereView(3, spheres);
 	array_view<Light, 1> LightView(1, lights);
 
@@ -77,7 +77,7 @@ Color* RenderScene(Color* rgb) {
 	parallel_for_each(
 		ColorView.extent,
 		[=](index<2> idx) restrict(amp) {
-			ColorView[idx[0]][idx[1]] = RenderPixel(idx, SphereView, LightView, cam);
+			ColorView[idx] = RenderPixel(idx, SphereView, LightView, cam);
 		}
 	);
 
