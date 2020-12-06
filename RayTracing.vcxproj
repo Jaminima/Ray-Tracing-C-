@@ -148,6 +148,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="Aliasing.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Rendering.h" />
