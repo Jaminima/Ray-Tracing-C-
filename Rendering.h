@@ -10,11 +10,12 @@ using namespace concurrency;
 
 Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> lights) restrict(amp) {
 	Vec3 delta;
-	float distance;
-
 	Vec3 lightmul(0, 0, 0);
 
-	for (unsigned int i = 0; i < lights.extent.size(); i++) {
+	float distance;
+	unsigned int lightHits = 0;
+
+	for (unsigned int i = 0; i < lights.extent.size() && lightHits<lightHitLimit; i++) {
 		delta = point - lights[i].Position;
 
 		bool hitSomthing = false;
@@ -24,6 +25,7 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 		for (unsigned int j = 0; j < spheres.extent.size(); j++) {
 			if (spheres[j].RayHit(r)) {
 				hitSomthing = true;
+				lightHits++;
 				break;
 			}
 		}
@@ -51,9 +53,9 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 	float LastHit;
 	Ray hitRay;
 	int hitSphere = 0;
-	unsigned int reflection = 1;
+	unsigned int reflection = 0;
 
-	while (hitSphere != -1) {
+	while (hitSphere != -1 && reflection<reflectionLimit) {
 		hitSphere = -1;
 		LastHit = 0xFFFFFFFF;
 
@@ -70,7 +72,7 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 		if (hitSphere != -1) {
 			Vec3 impact = spheres[hitSphere].IntersectionPoint(&hitRay, LastHit);
 
-			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1.0f / reflection));
+			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1.0f / (reflection+1)));
 			r = spheres[hitSphere].Sphere_PointNormal(impact, &hitRay);
 		}
 
