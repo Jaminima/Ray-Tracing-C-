@@ -5,7 +5,8 @@
 const int fxaa_center = 9,
 fxaa_adjacent = 2,
 fxaa_corner = 1,
-fxaa_sum = fxaa_center + (fxaa_adjacent * 4) + (fxaa_corner * 4);
+fxaa_edge = 1,
+fxaa_sum = fxaa_center + (fxaa_adjacent * 4) + (fxaa_corner * 4) + (4*fxaa_edge);
 
 
 void FXAA(Color* rgb) {
@@ -34,7 +35,15 @@ void FXAA(Color* rgb) {
 
 			cornercolor = cornercolor * fxaa_corner;
 
-			aaColor = (aaColor + adjacentcolor + cornercolor) * fxaa_div;
+			Vec3 edgecolor = rgbData[idx[0] + 2][idx[1]].GetRGB();
+
+			edgecolor += rgbData[idx[0] - 2][idx[1]].GetRGB();
+			edgecolor += rgbData[idx[0]][idx[1] + 2].GetRGB();
+			edgecolor += rgbData[idx[0]][idx[1] - 2].GetRGB();
+
+			edgecolor = edgecolor * fxaa_edge;
+
+			aaColor = (aaColor + adjacentcolor + cornercolor + edgecolor) * fxaa_div;
 
 			rgbData[idx] = Color(aaColor.x, aaColor.y, aaColor.z);
 		});
