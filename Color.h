@@ -42,4 +42,12 @@ public:
 
 		return Color(r * f, g * f, b * f);
 	}
+
+	Color operator * (Vec3 f) restrict(amp) {
+		unsigned int r = (rgba >> 16) & 0xFF,
+			g = (rgba >> 8) & 0xFF,
+			b = rgba & 0xFF;
+
+		return Color(r * f.x, g * f.y, b * f.z);
+	}
 };

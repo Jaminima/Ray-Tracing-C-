@@ -5,6 +5,6 @@
 class Light {
 public:
 	Vec3 Position = Vec3(0, 0, 0);
-	Color color = Color(255, 255, 255);
-	float FadeOff = 0.3f;
+	Vec3 colormul = Vec3(1.0f, 1.0f, 1.0f);
+	float FadeOff = 2.0f;
 };

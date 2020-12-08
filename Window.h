@@ -21,7 +21,7 @@ void triggerReDraw() {
 	framesInSec++;
 
 	RenderScene(rgb);
-	//FXAA(rgb);
+	FXAA(rgb);
 
 	glutPostRedisplay();
 

@@ -8,7 +8,27 @@ using namespace concurrency;
 #include "GL/glut.h"
 #include "GL/freeglut.h"
 
-Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light,1> lights) restrict(amp) {
+Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> lights) restrict(amp) {
+	Vec3 delta;
+	float distance;
+
+	Vec3 lightmul(1,1,1);
+
+	for (unsigned int i = 0;i < lights.extent.size();i++) {
+		delta = lights[i].Position - point;
+		distance = fast_math::sqrtf(delta.dot(delta));
+
+		lightmul = (lightmul + (lights[i].colormul * (lights[i].FadeOff/distance)));
+		
+		//if (lightmul > 1) lightmul = 1;
+	}
+
+	lightmul = lightmul * (1.0f/lights.extent.size());
+
+	return lightmul;
+}
+
+Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> lights) restrict(amp) {
 	Color c(0, 0, 0);
 	float LastHit;
 	Ray hitRay;
@@ -32,13 +52,7 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light,1> lights
 		if (hitSphere != -1) {
 			Vec3 impact = spheres[hitSphere].IntersectionPoint(&hitRay, LastHit);
 
-			Vec3 delta = lights[0].Position - impact;
-			float distance = fast_math::sqrtf(delta.dot(delta));
-
-			float lightmul = (1 / (distance * lights[0].FadeOff));
-			if (lightmul > 1) lightmul = 1;
-
-			c = c + (spheres[hitSphere].color * (1.0f / reflection) * lightmul);
+			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1.0f / reflection) );
 			r = spheres[hitSphere].Sphere_PointNormal(impact, &hitRay);
 		}
 

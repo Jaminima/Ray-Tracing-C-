@@ -11,7 +11,7 @@ fxaa_sum = fxaa_center + (fxaa_adjacent * 4) + (fxaa_corner * 4);
 void FXAA(Color* rgb) {
 	float fxaa_div = 1.0f / fxaa_sum;
 
-	array_view<Color,2> rgbData(px, py, rgb);
+	array_view<Color,2> rgbData(py, px, rgb);
 
 	parallel_for_each(
 		rgbData.extent,

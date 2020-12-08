@@ -48,6 +48,8 @@ int main(int argc, char** argv)
 	spheres[2].Center = Vec3(-5, 0, -5);
 	spheres[2].color = Color(0, 0, 255);
 
+	spheres[3].Center = Vec3(-2, 5, 2);
+
 	SetupFrame(argc, argv);
 
 	while (true) {}
