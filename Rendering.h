@@ -102,7 +102,7 @@ Light* lights;
 Color* RenderScene(Color* rgb) {
 	array_view<Color, 2> ColorView(py, px, rgb);
 	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
-	array_view<Light, 1> LightView(1, lights);
+	array_view<Light, 1> LightView(totalLights, lights);
 
 	Camera cam = mainCamera;
 

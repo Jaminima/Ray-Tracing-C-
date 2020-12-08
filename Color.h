@@ -48,6 +48,6 @@ public:
 			g = (rgba >> 8) & 0xFF,
 			b = rgba & 0xFF;
 
-		return Color(r * f.x, g * f.y, b * f.z);
+		return Color(r * f.z, g * f.y, b * f.x);
 	}
 };
