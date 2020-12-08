@@ -26,8 +26,6 @@ bool pick_accelerator()
 	return success;
 }
 
-
-
 int main(int argc, char** argv)
 {
 	pick_accelerator();
@@ -45,7 +43,7 @@ int main(int argc, char** argv)
 	spheres[1].Center = Vec3(5, 5, 5);
 	spheres[1].color = Color(255, 0, 0);
 
-	spheres[2].Center = Vec3(-5, 0, -5);
+	spheres[2].Center = Vec3(-5, 0, -10);
 	spheres[2].color = Color(0, 0, 255);
 
 	spheres[3].Center = Vec3(-2, 5, 2);

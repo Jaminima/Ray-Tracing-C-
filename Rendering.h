@@ -12,18 +12,36 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 	Vec3 delta;
 	float distance;
 
-	Vec3 lightmul(1,1,1);
+	Vec3 lightmul(0, 0, 0);
 
-	for (unsigned int i = 0;i < lights.extent.size();i++) {
-		delta = lights[i].Position - point;
-		distance = fast_math::sqrtf(delta.dot(delta));
+	for (unsigned int i = 0; i < lights.extent.size(); i++) {
+		delta = point - lights[i].Position;
 
-		lightmul = (lightmul + (lights[i].colormul * (lights[i].FadeOff/distance)));
-		
+		bool hitSomthing = false;
+
+		Ray r(lights[i].Position, delta * -1);
+
+		for (unsigned int j = 0; j < spheres.extent.size(); j++) {
+			if (spheres[j].RayHit(r)) {
+				hitSomthing = true;
+				break;
+			}
+		}
+
+		if (!hitSomthing) {
+			distance = fast_math::sqrtf(delta.dot(delta));
+
+			lightmul = (lightmul + (lights[i].colormul * (lights[i].FadeOff / distance)));
+		}
+
 		//if (lightmul > 1) lightmul = 1;
 	}
 
-	lightmul = lightmul * (1.0f/lights.extent.size());
+	lightmul = lightmul * (1.0f / lights.extent.size());
+
+	if (lightmul.x > 1) lightmul.x = 1;
+	if (lightmul.y > 1) lightmul.y = 1;
+	if (lightmul.z > 1) lightmul.z = 1;
 
 	return lightmul;
 }
@@ -52,7 +70,7 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 		if (hitSphere != -1) {
 			Vec3 impact = spheres[hitSphere].IntersectionPoint(&hitRay, LastHit);
 
-			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1.0f / reflection) );
+			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1.0f / reflection));
 			r = spheres[hitSphere].Sphere_PointNormal(impact, &hitRay);
 		}
 
@@ -67,7 +85,7 @@ Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light,
 		vy = (idx[0] / (float)py_half) - 1;
 
 	vx *= cam.fov;
-	vy *= cam.fov * (py/(float)px);
+	vy *= cam.fov * (py / (float)px);
 
 	Vec3 Direction = Vec3(vx, vy, 1);
 
