@@ -16,21 +16,25 @@ void FXAA(Color* rgb) {
 	parallel_for_each(
 		rgbData.extent,
 		[=](index<2>idx) restrict(amp) {
-			Vec3 aaColor(0, 0, 0);
+			Vec3 aaColor = rgbData[idx].GetRGB() * fxaa_center;
 
-			aaColor += rgbData[idx].GetRGB() * fxaa_center;
+			Vec3 adjacentcolor = rgbData[idx[0]][idx[1]+1].GetRGB();
 
-			aaColor += rgbData[idx[0]][idx[1]+1].GetRGB() * fxaa_adjacent;
-			aaColor += rgbData[idx[0]][idx[1]-1].GetRGB() * fxaa_adjacent;
-			aaColor += rgbData[idx[0]+1][idx[1]].GetRGB() * fxaa_adjacent;
-			aaColor += rgbData[idx[0]-1][idx[1]].GetRGB() * fxaa_adjacent;
+			adjacentcolor += rgbData[idx[0]][idx[1]-1].GetRGB();
+			adjacentcolor += rgbData[idx[0]+1][idx[1]].GetRGB();
+			adjacentcolor += rgbData[idx[0]-1][idx[1]].GetRGB();
 
-			aaColor += rgbData[idx[0] + 1][idx[1] + 1].GetRGB() * fxaa_corner;
-			aaColor += rgbData[idx[0] - 1][idx[1] + 1].GetRGB() * fxaa_corner;
-			aaColor += rgbData[idx[0] + 1][idx[1] - 1].GetRGB() * fxaa_corner;
-			aaColor += rgbData[idx[0] - 1][idx[1] - 1].GetRGB() * fxaa_corner;
+			adjacentcolor = adjacentcolor * fxaa_adjacent;
+			
+			Vec3 cornercolor = rgbData[idx[0] + 1][idx[1] + 1].GetRGB();
 
-			aaColor = aaColor * fxaa_div;
+			cornercolor += rgbData[idx[0] - 1][idx[1] + 1].GetRGB();
+			cornercolor += rgbData[idx[0] + 1][idx[1] - 1].GetRGB();
+			cornercolor += rgbData[idx[0] - 1][idx[1] - 1].GetRGB();
+
+			cornercolor = cornercolor * fxaa_corner;
+
+			aaColor = (aaColor + adjacentcolor + cornercolor) * fxaa_div;
 
 			rgbData[idx] = Color(aaColor.x, aaColor.y, aaColor.z);
 		});
