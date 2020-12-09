@@ -91,8 +91,10 @@ Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light,
 
 	Vec3 Direction = Vec3(vx, vy, 1);
 
-	Direction += cam.Angle;
-	Direction.normalise();
+	Direction = cam.RotateDirection(Direction);
+
+	/*Direction += cam.Angle;
+	Direction.normalise();*/
 
 	Ray r(cam.Position, Direction);
 	return RenderRay(r, spheres, lights);
@@ -107,6 +109,13 @@ Color* RenderScene(Color* rgb) {
 	array_view<Light, 1> LightView(totalLights, lights);
 
 	Camera cam = mainCamera;
+
+	parallel_for_each(
+		SphereView.extent,
+		[=](index<1> idx) restrict(amp) {
+
+		}
+	);
 
 	parallel_for_each(
 		ColorView.extent,

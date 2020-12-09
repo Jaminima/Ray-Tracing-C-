@@ -15,8 +15,8 @@ void drawFrame()
 }
 
 void triggerReDraw() {
-	//mainCamera.Angle.x -= 0.001f;
-	mainCamera.Position.z += 0.01f;
+	//mainCamera.Position.z += 0.01f;
+	mainCamera.RotateCamera(Vec3(0, 0.01f, 0));
 
 	framesInSec++;
 

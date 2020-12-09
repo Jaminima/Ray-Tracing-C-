@@ -37,6 +37,11 @@ public:
 		return N;
 	}
 
+	Vec3 operator+ (Vec3 V){
+		Vec3 N(x + V.x, y + V.y, z + V.z);
+		return N;
+	}
+
 	void operator+= (Vec3 V) restrict(amp) {
 		x += V.x;
 		y += V.y;
