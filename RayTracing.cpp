@@ -30,8 +30,6 @@ int main(int argc, char** argv)
 {
 	pick_accelerator();
 
-	rgb = (Color*)malloc(px * py * sizeof(Color));
-
 	//stbi_write_png("image.png", px, px, 4, rgb, 0);
 
 	spheres = new Sphere[totalSpheres];

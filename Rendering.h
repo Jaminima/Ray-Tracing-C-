@@ -103,28 +103,16 @@ Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light,
 Sphere* spheres;
 Light* lights;
 
-Color* RenderScene(Color* rgb) {
-	array_view<Color, 2> ColorView(py, px, rgb);
+
+void RenderScene(array_view<Color,2> rgb) {
+	Camera cam = mainCamera;
 	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
 	array_view<Light, 1> LightView(totalLights, lights);
 
-	Camera cam = mainCamera;
-
 	parallel_for_each(
-		SphereView.extent,
-		[=](index<1> idx) restrict(amp) {
-
-		}
-	);
-
-	parallel_for_each(
-		ColorView.extent,
+		rgb.extent,
 		[=](index<2> idx) restrict(amp) {
-			ColorView[idx] = RenderPixel(idx, SphereView, LightView, cam);
+			rgb[idx] = RenderPixel(idx, SphereView, LightView, cam);
 		}
 	);
-
-	ColorView.synchronize();
-
-	return rgb;
 }

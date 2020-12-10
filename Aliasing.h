@@ -8,10 +8,8 @@ fxaa_corner = 1,
 fxaa_edge = 1,
 fxaa_sum = fxaa_center + (fxaa_adjacent * 4) + (fxaa_corner * 4) + (4 * fxaa_edge);
 
-void FXAA(Color* rgb) {
+void FXAA(array_view<Color,2> rgbData) {
 	float fxaa_div = 1.0f / fxaa_sum;
-
-	array_view<Color, 2> rgbData(py, px, rgb);
 
 	parallel_for_each(
 		rgbData.extent,
@@ -46,6 +44,4 @@ void FXAA(Color* rgb) {
 
 			rgbData[idx] = Color(aaColor.x, aaColor.y, aaColor.z);
 		});
-
-	rgbData.synchronize();
 }

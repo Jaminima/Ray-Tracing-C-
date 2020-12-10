@@ -3,27 +3,37 @@
 #include "Rendering.h"
 #include "Aliasing.h"
 
-Color* rgb;
+Color* rgbBuffers = (Color*)malloc(2 * px * py  * sizeof(Color));
 
+array_view<Color, 3> rgb(2, py, px, rgbBuffers);
+
+bool LockedBuffer = false;
 unsigned int framesInSec = 0;
 time_t startTime = clock();
 
 void drawFrame()
 {
-	glDrawPixels(px, py, GL_RGBA, GL_UNSIGNED_BYTE, rgb);
+	glDrawPixels(px, py, GL_RGBA, GL_UNSIGNED_BYTE, &rgbBuffers[px*py*!LockedBuffer]);
 	glutSwapBuffers();
 }
 
+Concurrency::completion_future pendingFrameCopy;
+
 void triggerReDraw() {
 	//mainCamera.Position.z += 0.01f;
-	mainCamera.RotateCamera(Vec3(0, 0.01f, 0));
+	mainCamera.RotateCamera(Vec3(0, 0.001f, 0));
 
 	framesInSec++;
 
-	RenderScene(rgb);
-	FXAA(rgb);
+	RenderScene(rgb[LockedBuffer]);
+	FXAA(rgb[LockedBuffer]);
+
+	pendingFrameCopy = rgb[LockedBuffer].synchronize_async();
 
 	glutPostRedisplay();
+	pendingFrameCopy.wait();
+
+	LockedBuffer = !LockedBuffer;
 
 	if (clock() - startTime >= 1000) {
 		printf_s("You averaged %d fps\n", framesInSec);
