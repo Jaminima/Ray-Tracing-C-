@@ -62,10 +62,11 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 		for (unsigned int i = 0; i < spheres.extent.size(); i++) {
 			float RayHit = spheres[i].RayHitDistance(r);
 
-			if (RayHit > 0 && RayHit < LastHit) {
+			if (RayHit > 0) {
 				hitSphere = i;
 				hitRay = r;
 				LastHit = RayHit;
+				break;
 			}
 		}
 
@@ -104,10 +105,56 @@ Sphere* spheres;
 Light* lights;
 
 
-void RenderScene(array_view<Color,2> rgb) {
-	Camera cam = mainCamera;
+void OrderCamera() {
 	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
+	array_view<Sphere, 1> FinalSphereView(totalSpheres, spheres);
+	array_view<float, 1> DistanceView(totalSpheres);
+	//array_view<unsigned int, 1> SphereOrder(totalSpheres);
+
+	Camera cam = mainCamera;
+
+	parallel_for_each(
+		SphereView.extent,
+		[=](index<1> idx) restrict(amp) {
+		DistanceView[idx] = sqrtf(SphereView[idx].Center.dot(cam.Position));
+		}
+	);
+
+	parallel_for_each(
+		SphereView.extent,
+		[=](index<1> idx) restrict(amp) {
+		float nthValue = DistanceView[0];
+		unsigned int nth = 0;
+		unsigned int lessthan=0;
+
+		for (unsigned int i = 0;i < DistanceView.extent[0];i++) {
+			if (nthValue > DistanceView[i]) { 
+				if (lessthan == idx[0]) {
+					nth = idx[0];
+					break;
+				}
+				else {
+					lessthan++;
+					nthValue = DistanceView[i]; 
+					nth = i;
+				}
+			}
+		}
+
+		//SphereOrder[idx] = nth;
+		FinalSphereView[nth] = SphereView[idx];
+	}
+	);
+
+	FinalSphereView.synchronize_async();
+}
+
+
+void RenderScene(array_view<Color,2> rgb) {
 	array_view<Light, 1> LightView(totalLights, lights);
+	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
+
+	Camera cam = mainCamera;
 
 	parallel_for_each(
 		rgb.extent,

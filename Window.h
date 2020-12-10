@@ -25,13 +25,14 @@ void triggerReDraw() {
 
 	framesInSec++;
 
+	OrderCamera();
+
 	RenderScene(rgb[LockedBuffer]);
 	FXAA(rgb[LockedBuffer]);
 
 	pendingFrameCopy = rgb[LockedBuffer].synchronize_async();
 
 	glutPostRedisplay();
-	pendingFrameCopy.wait();
 
 	LockedBuffer = !LockedBuffer;
 
@@ -40,6 +41,8 @@ void triggerReDraw() {
 		framesInSec = 0;
 		startTime = clock();
 	}
+
+	pendingFrameCopy.wait();
 }
 
 void SetupFrame(int argc, char** argv) {
