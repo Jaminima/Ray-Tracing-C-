@@ -50,7 +50,7 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 
 Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> lights) restrict(amp) {
 	Color c(0, 0, 0);
-	float LastHit;
+	float LastHit, totalReflectivity = 0.0f, reflec = 0.0f;
 	Ray hitRay;
 	int hitSphere = 0;
 	unsigned int reflection = 0;
@@ -73,8 +73,12 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 		if (hitSphere != -1) {
 			Vec3 impact = spheres[hitSphere].IntersectionPoint(&hitRay, LastHit);
 
-			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1.0f / (reflection+1)));
+			if (totalReflectivity > 0.0f) reflec = totalReflectivity;
+
+			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1-reflec));
 			r = spheres[hitSphere].Sphere_PointNormal(impact, &hitRay);
+
+			totalReflectivity += sqrtf(spheres[hitSphere].reflectivity);
 		}
 
 		reflection++;
@@ -117,38 +121,17 @@ void OrderCamera() {
 	parallel_for_each(
 		SphereView.extent,
 		[=](index<1> idx) restrict(amp) {
-		DistanceView[idx] = sqrtf(dupe[idx].Center.dot(cam.Position));
+			Vec3 x = dupe[idx].Center - cam.Position;
+			DistanceView[idx] = sqrtf(x.dot(x));
 		}
 	);
 
 	parallel_for_each(
-		SphereView.extent,
+		dupe.extent,
 		[=](index<1> idx) restrict(amp) {
-		float nthValue = DistanceView[0];
-		unsigned int nth = 0;
-		unsigned int lessthan=0;
-
-		for (unsigned int i = 0;i < DistanceView.extent[0];i++) {
-			if (nthValue > DistanceView[i]) { 
-				if (lessthan == idx[0]) {
-					nth = idx[0];
-					break;
-				}
-				else {
-					lessthan++;
-					nthValue = DistanceView[i]; 
-					nth = i;
-				}
-			}
-		}
-
-		//SphereOrder[idx] = nth;
-		FinalSphereView[nth] = dupe[idx];
+			
 	}
 	);
-
-	FinalSphereView.synchronize_async();
-	dupe.refresh();
 }
 
 

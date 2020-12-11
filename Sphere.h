@@ -10,7 +10,7 @@ using namespace concurrency;
 
 class Sphere {
 public:
-	float radius = 3;
+	float radius = 3, reflectivity = 0.1f;
 	Color color = Color(255, 255, 255);
 	Vec3 Center = Vec3(0, 0, 0);
 
