@@ -3,7 +3,7 @@
 #include "Rendering.h"
 #include "Aliasing.h"
 
-Color* rgbBuffers = (Color*)malloc(2 * px * py  * sizeof(Color));
+Color* rgbBuffers = (Color*)malloc(2 * px * py * sizeof(Color));
 
 array_view<Color, 3> rgb(2, py, px, rgbBuffers);
 
@@ -13,7 +13,7 @@ time_t startTime = clock();
 
 void drawFrame()
 {
-	glDrawPixels(px, py, GL_RGBA, GL_UNSIGNED_BYTE, &rgbBuffers[px*py*!LockedBuffer]);
+	glDrawPixels(px, py, GL_RGBA, GL_UNSIGNED_BYTE, &rgbBuffers[px * py * !LockedBuffer]);
 	glutSwapBuffers();
 }
 
@@ -21,9 +21,9 @@ Concurrency::completion_future pendingFrameCopy;
 
 void triggerReDraw() {
 	//spheres[2].Center.x += 0.01f;
-	mainCamera.Position.z += 0.001f;
-	mainCamera.Position.x -= 0.01f;
-	mainCamera.RotateCamera(Vec3(0, 0.001f, 0));
+	mainCamera.Position.z += 0.01f;
+	//mainCamera.Position.x += 0.01f;
+	mainCamera.RotateCamera(Vec3(0, -0.001f, 0));
 
 	framesInSec++;
 

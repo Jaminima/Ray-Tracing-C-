@@ -16,7 +16,7 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 	float distance;
 	unsigned int lightHits = 0;
 
-	for (unsigned int i = 0; i < lights.extent.size() && lightHits<lightHitLimit; i++) {
+	for (unsigned int i = 0; i < lights.extent.size() && lightHits < lightHitLimit; i++) {
 		delta = point - lights[i].Position;
 
 		bool hitSomthing = false;
@@ -51,23 +51,25 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 
 Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> lights) restrict(amp) {
 	Color c(0, 0, 0);
-	float LastHit, totalReflectivity = 0.0f, reflec = 0.0f;
+	float LastHit = 0.0f, totalReflectivity = 0.0f, reflec = 0.0f;
+	const float rayTolerance = 0.1f;
 	Ray hitRay;
 	int hitSphere = 0;
 	unsigned int reflection = 0;
 
-	while (hitSphere != -1 && reflection<reflectionLimit) {
+	while (hitSphere != -1 && reflection < reflectionLimit) {
 		hitSphere = -1;
 		LastHit = 0xFFFFFFFF;
 
 		for (unsigned int i = 0; i < spheres.extent.size(); i++) {
 			float RayHit = spheres[i].RayHitDistance(r);
-
-			if (RayHit > 0) {
-				hitSphere = i;
-				hitRay = r;
-				LastHit = RayHit;
-				break;
+			if (0 < RayHit) {
+				if (RayHit < LastHit) {
+					hitSphere = i;
+					hitRay = r;
+					LastHit = RayHit;
+				}
+				else if (RayHit > LastHit + rayTolerance && hitSphere != -1) break;
 			}
 		}
 
@@ -76,7 +78,7 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 
 			if (totalReflectivity > 0.0f) reflec = totalReflectivity;
 
-			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1-reflec));
+			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1 - reflec));
 			r = spheres[hitSphere].Sphere_PointNormal(impact, &hitRay);
 
 			totalReflectivity += sqrtf(spheres[hitSphere].reflectivity);
@@ -133,7 +135,7 @@ void OrderCamera() {
 	SphereView.refresh();
 }
 
-void RenderScene(array_view<Color,2> rgb) {
+void RenderScene(array_view<Color, 2> rgb) {
 	array_view<Light, 1> LightView(totalLights, lights);
 	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
 

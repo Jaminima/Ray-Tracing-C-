@@ -28,10 +28,10 @@ unsigned int Partition(unsigned int low, unsigned int high, float* Distances, Sp
 	return pivotIndex;
 }
 
-void QuickSort(unsigned int low, unsigned int high ,float* Distances, Sphere* Spheres) {
+void QuickSort(unsigned int low, unsigned int high, float* Distances, Sphere* Spheres) {
 	if (low < high) {
 		unsigned int part = Partition(low, high, Distances, Spheres);
-		if (part>0) QuickSort(low, part - 1, Distances, Spheres);
+		if (part > 0) QuickSort(low, part - 1, Distances, Spheres);
 		QuickSort(part + 1, high, Distances, Spheres);
 	}
 }

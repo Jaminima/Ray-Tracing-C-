@@ -14,7 +14,7 @@ public:
 	Vec3 Position = Vec3(0, 0, -20);
 	Vec3 Angle = Vec3(0, 0, 0);
 
-	void RotateCamera(Vec3 rot){
+	void RotateCamera(Vec3 rot) {
 		Angle = rot + Angle + Vec3(Pi, Pi, Pi);
 
 		Angle.x = fmodf(Angle.x, Pi2) - Pi;
@@ -33,8 +33,8 @@ public:
 	Vec3 RotateDirection(Vec3 dir) restrict(amp) {
 		dir = Vec3(
 			dir.x,
-			(cosx*dir.y) + (sinx*dir.z),
-			(cosx*dir.z) - (sinx*dir.y));
+			(cosx * dir.y) + (sinx * dir.z),
+			(cosx * dir.z) - (sinx * dir.y));
 
 		dir = Vec3(
 			(cosy * dir.x) + (siny * dir.z),
