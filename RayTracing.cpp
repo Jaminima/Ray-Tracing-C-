@@ -36,12 +36,12 @@ int main(int argc, char** argv)
 	lights = new Light[totalLights];
 
 	lights[0].Position = Vec3(-5, 0, 0);
-	lights[0].colormul = Vec3(1, 1, 1);
+	lights[0].colormul = Vec3(0.5f, 0.8f, 0.8f);
 
-	spheres[0].Center = Vec3(5, -5, 0);
+	spheres[0].Center = Vec3(2, -5, 0);
 	spheres[0].color = Color(0, 255, 0);
 
-	spheres[1].Center = Vec3(5, 5, 5);
+	spheres[1].Center = Vec3(2, 2, 5);
 	spheres[1].color = Color(255, 0, 0);
 
 	spheres[2].Center = Vec3(-5, 0, -10);

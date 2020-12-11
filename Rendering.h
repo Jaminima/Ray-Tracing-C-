@@ -33,13 +33,13 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 		if (!hitSomthing) {
 			distance = fast_math::sqrtf(delta.dot(delta));
 
-			lightmul = (lightmul + (lights[i].colormul * (lights[i].FadeOff / distance)));
+			lightmul = (lightmul + (lights[i].colormul * (1.0f - (distance / lights[i].FadeOff))));
 		}
 
 		//if (lightmul > 1) lightmul = 1;
 	}
 
-	lightmul = lightmul * (1.0f / lights.extent.size());
+	//lightmul = lightmul * (1.0f / lights.extent.size());
 
 	if (lightmul.x > 1) lightmul.x = 1;
 	if (lightmul.y > 1) lightmul.y = 1;
@@ -101,22 +101,23 @@ Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light,
 	return RenderRay(r, spheres, lights);
 }
 
-Sphere* spheres;
-Light* lights;
+Sphere* spheres = new Sphere[totalSpheres];
+Light* lights = new Light[totalLights];
+
+array_view<Sphere, 1> SphereView(totalSpheres, spheres);
 
 
 void OrderCamera() {
-	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
+	auto dupe = SphereView;
 	array_view<Sphere, 1> FinalSphereView(totalSpheres, spheres);
 	array_view<float, 1> DistanceView(totalSpheres);
-	//array_view<unsigned int, 1> SphereOrder(totalSpheres);
 
 	Camera cam = mainCamera;
 
 	parallel_for_each(
 		SphereView.extent,
 		[=](index<1> idx) restrict(amp) {
-		DistanceView[idx] = sqrtf(SphereView[idx].Center.dot(cam.Position));
+		DistanceView[idx] = sqrtf(dupe[idx].Center.dot(cam.Position));
 		}
 	);
 
@@ -142,11 +143,12 @@ void OrderCamera() {
 		}
 
 		//SphereOrder[idx] = nth;
-		FinalSphereView[nth] = SphereView[idx];
+		FinalSphereView[nth] = dupe[idx];
 	}
 	);
 
 	FinalSphereView.synchronize_async();
+	dupe.refresh();
 }
 
 
