@@ -2,6 +2,7 @@
 #include "Light.h"
 #include "Sphere.h"
 #include "Const.h"
+#include "QuickSort.h"
 #include <amp.h>
 using namespace concurrency;
 
@@ -107,33 +108,30 @@ Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light,
 
 Sphere* spheres = new Sphere[totalSpheres];
 Light* lights = new Light[totalLights];
+float* distances = new float[totalSpheres];
 
-array_view<Sphere, 1> SphereView(totalSpheres, spheres);
-
+void SortSpheres() {
+	QuickSort(0, totalSpheres - 1, distances, spheres);
+}
 
 void OrderCamera() {
-	auto dupe = SphereView;
-	array_view<Sphere, 1> FinalSphereView(totalSpheres, spheres);
-	array_view<float, 1> DistanceView(totalSpheres);
+	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
+	array_view<float, 1> DistanceView(totalSpheres, distances);
 
 	Camera cam = mainCamera;
 
 	parallel_for_each(
 		SphereView.extent,
 		[=](index<1> idx) restrict(amp) {
-			Vec3 x = dupe[idx].Center - cam.Position;
+			Vec3 x = SphereView[idx].Center - cam.Position;
 			DistanceView[idx] = sqrtf(x.dot(x));
 		}
 	);
 
-	parallel_for_each(
-		dupe.extent,
-		[=](index<1> idx) restrict(amp) {
-			
-	}
-	);
-}
+	DistanceView.synchronize_async().then(SortSpheres);
 
+	SphereView.refresh();
+}
 
 void RenderScene(array_view<Color,2> rgb) {
 	array_view<Light, 1> LightView(totalLights, lights);

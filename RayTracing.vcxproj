@@ -150,6 +150,7 @@
     <ClInclude Include="Aliasing.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="List.h" />
+    <ClInclude Include="QuickSort.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="Sphere.h" />

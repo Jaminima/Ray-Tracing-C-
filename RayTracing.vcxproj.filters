@@ -65,6 +65,9 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="QuickSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
