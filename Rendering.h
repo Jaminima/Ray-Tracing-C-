@@ -51,7 +51,7 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 
 Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> lights) restrict(amp) {
 	Color c(0, 0, 0);
-	float LastHit = 0.0f, totalReflectivity = 0.0f, reflec = 0.0f;
+	float LastHit = 0.0f, totalReflectivity = 1.0f;
 	const float rayTolerance = 0.1f;
 	Ray hitRay;
 	int hitSphere = 0;
@@ -76,12 +76,12 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 		if (hitSphere != -1) {
 			Vec3 impact = spheres[hitSphere].IntersectionPoint(&hitRay, LastHit);
 
-			if (totalReflectivity > 0.0f) reflec = totalReflectivity;
-
-			c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * (1 - reflec));
+			if (totalReflectivity==1.0f) c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights));
+			else c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * totalReflectivity);
+			
 			r = spheres[hitSphere].Sphere_PointNormal(impact, &hitRay);
 
-			totalReflectivity += sqrtf(spheres[hitSphere].reflectivity);
+			totalReflectivity *= spheres[hitSphere].reflectivity;
 		}
 
 		reflection++;

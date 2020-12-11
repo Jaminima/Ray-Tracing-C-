@@ -22,7 +22,7 @@ Concurrency::completion_future pendingFrameCopy;
 void triggerReDraw() {
 	//spheres[2].Center.x += 0.01f;
 	mainCamera.Position.z += 0.01f;
-	//mainCamera.Position.x += 0.01f;
+	mainCamera.Position.x += 0.01f;
 	mainCamera.RotateCamera(Vec3(0, -0.001f, 0));
 
 	framesInSec++;
