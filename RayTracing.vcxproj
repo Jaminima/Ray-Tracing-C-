@@ -142,12 +142,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="RayTracing.cpp" />
+    <ClCompile Include="Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="Aliasing.h" />
+    <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="QuickSort.h" />

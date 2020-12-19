@@ -8,4 +8,4 @@ const unsigned int totalSpheres = 5, totalLights = 2;
 
 const int reflectionLimit = 100, lightHitLimit = 100;
 
-Camera mainCamera;
+extern Camera mainCamera;

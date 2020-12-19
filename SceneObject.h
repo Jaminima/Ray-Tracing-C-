@@ -1,17 +1,18 @@
 #pragma once
-#include "Color.h"
 #include "vec3.h"
-#include "SceneObject.h"
+#include "Ray.h"
 
-class Sphere : public SceneObject {
+#include "Const.h"
+
+#include <amp.h>
+using namespace concurrency;
+
+struct SceneObject {
 public:
-	float radius = 3, reflectivity = 0.9f;
-	Color color = Color(255, 255, 255);
-	Vec3 Center = Vec3(0, 0, 0);
+	SceneObject(){}
+	SceneObject() restrict(amp){}
 
-	Sphere() {}
-	Sphere() restrict(amp) {}
-
+protected:
 	float RayHitDistance(Ray r) restrict(amp);
 
 	bool RayHit(Ray r) restrict(amp);
