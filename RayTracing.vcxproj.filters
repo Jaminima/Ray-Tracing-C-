@@ -22,13 +22,25 @@
     <Filter Include="Header Files\Engine">
       <UniqueIdentifier>{33a76b61-7ddf-4900-a79e-9e4508c81f28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Objects\Scene">
+      <UniqueIdentifier>{bf44d47e-c00a-4864-b1e5-b22358fe6356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{79416c17-7766-4d09-acf6-ffc0354f3f94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Scene">
+      <UniqueIdentifier>{5fe00d2a-e4d3-4253-b460-dfcf13cca07a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RayTracing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sphere.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Objects\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Source Files\Objects\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -47,9 +59,6 @@
     <ClInclude Include="Color.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sphere.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="Ray.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
@@ -57,9 +66,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="QuickSort.h">
@@ -75,7 +81,16 @@
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
     <ClInclude Include="SceneObject.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Objects\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files\Objects\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Objects\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Header Files\Objects\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

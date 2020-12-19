@@ -9,7 +9,7 @@ using namespace concurrency;
 #include "GL/glut.h"
 #include "GL/freeglut.h"
 
-Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> lights) restrict(amp) {
+Vec3 LightMul(Vec3 point, array_view<SceneObject, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp) {
 	Vec3 delta;
 	Vec3 lightmul(0, 0, 0);
 
@@ -23,8 +23,8 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 
 		Ray r(lights[i].Position, delta * -1);
 
-		for (unsigned int j = 0; j < spheres.extent.size(); j++) {
-			if (spheres[j].RayHit(r)) {
+		for (unsigned int j = 0; j < SceneObjects.extent.size(); j++) {
+			if (SceneObjects[j].RayHit(r)) {
 				hitSomthing = true;
 				lightHits++;
 				break;
@@ -49,7 +49,7 @@ Vec3 LightMul(Vec3 point, array_view<Sphere, 1> spheres, array_view<Light, 1> li
 	return lightmul;
 }
 
-Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> lights) restrict(amp) {
+Color RenderRay(Ray r, array_view<SceneObject, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp) {
 	Color c(0, 0, 0);
 	float LastHit = 0.0f, totalReflectivity = 1.0f;
 	const float rayTolerance = 0.1f;
@@ -61,8 +61,8 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 		hitSphere = -1;
 		LastHit = 0xFFFFFFFF;
 
-		for (unsigned int i = 0; i < spheres.extent.size(); i++) {
-			float RayHit = spheres[i].RayHitDistance(r);
+		for (unsigned int i = 0; i < SceneObjects.extent.size(); i++) {
+			float RayHit = SceneObjects[i].RayHitDistance(r);
 			if (0 < RayHit) {
 				if (RayHit < LastHit) {
 					hitSphere = i;
@@ -74,14 +74,14 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 		}
 
 		if (hitSphere != -1) {
-			Vec3 impact = spheres[hitSphere].IntersectionPoint(&hitRay, LastHit);
+			Vec3 impact = SceneObjects[hitSphere].IntersectionPoint(hitRay, LastHit);
 
-			if (totalReflectivity==1.0f) c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights));
-			else c = c + (spheres[hitSphere].color * LightMul(impact, spheres, lights) * totalReflectivity);
+			if (totalReflectivity==1.0f) c = c + (SceneObjects[hitSphere].color * LightMul(impact, SceneObjects, lights));
+			else c = c + (SceneObjects[hitSphere].color * LightMul(impact, SceneObjects, lights) * totalReflectivity);
 			
-			r = spheres[hitSphere].Sphere_PointNormal(impact, &hitRay);
+			r = SceneObjects[hitSphere].PointNormal(impact, hitRay);
 
-			totalReflectivity *= spheres[hitSphere].reflectivity;
+			totalReflectivity *= SceneObjects[hitSphere].reflectivity;
 		}
 
 		reflection++;
@@ -90,7 +90,7 @@ Color RenderRay(Ray r, array_view<Sphere, 1> spheres, array_view<Light, 1> light
 	return c;
 }
 
-Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light, 1> lights, Camera cam) restrict(amp) {
+Color RenderPixel(index<2> idx, array_view<SceneObject, 1> SceneObjects, array_view<Light, 1> lights, Camera cam) restrict(amp) {
 	float vx = (idx[1] / (float)px_half) - 1,
 		vy = (idx[0] / (float)py_half) - 1;
 
@@ -105,46 +105,46 @@ Color RenderPixel(index<2> idx, array_view<Sphere, 1> spheres, array_view<Light,
 	Direction.normalise();*/
 
 	Ray r(cam.Position, Direction);
-	return RenderRay(r, spheres, lights);
+	return RenderRay(r, SceneObjects, lights);
 }
 
-Sphere* spheres = new Sphere[totalSpheres];
+SceneObject* sceneObjects = new SceneObject[totalSceneObjects];
 Light* lights = new Light[totalLights];
-float* distances = new float[totalSpheres];
+float* distances = new float[totalSceneObjects];
 
 void SortSpheres() {
-	QuickSort(0, totalSpheres - 1, distances, spheres);
+	QuickSort(0, totalSceneObjects - 1, distances, sceneObjects);
 }
 
 void OrderCamera() {
-	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
-	array_view<float, 1> DistanceView(totalSpheres, distances);
+	array_view<SceneObject, 1> SceneView(totalSceneObjects, sceneObjects);
+	array_view<float, 1> DistanceView(totalSceneObjects, distances);
 
 	Camera cam = mainCamera;
 
 	parallel_for_each(
-		SphereView.extent,
+		SceneView.extent,
 		[=](index<1> idx) restrict(amp) {
-			Vec3 x = SphereView[idx].Center - cam.Position;
+			Vec3 x = SceneView[idx].ApproxPosition() - cam.Position;
 			DistanceView[idx] = sqrtf(x.dot(x));
 		}
 	);
 
 	DistanceView.synchronize_async().then(SortSpheres);
 
-	SphereView.refresh();
+	SceneView.refresh();
 }
 
 void RenderScene(array_view<Color, 2> rgb) {
 	array_view<Light, 1> LightView(totalLights, lights);
-	array_view<Sphere, 1> SphereView(totalSpheres, spheres);
+	array_view<SceneObject, 1> SceneView(totalSceneObjects, sceneObjects);
 
 	Camera cam = mainCamera;
 
 	parallel_for_each(
 		rgb.extent,
 		[=](index<2> idx) restrict(amp) {
-			rgb[idx] = RenderPixel(idx, SphereView, LightView, cam);
+			rgb[idx] = RenderPixel(idx, SceneView, LightView, cam);
 		}
 	);
 }

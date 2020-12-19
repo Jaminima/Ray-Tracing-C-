@@ -1,18 +1,18 @@
 #pragma once
 #include "SceneObject.h"
 
-class Sphere : public SceneObject {
+class Triangle : public SceneObject {
 public:
-	Sphere() {}
-	Sphere() restrict(amp) {}
+	Triangle(){}
+	Triangle() restrict(amp) {}
 
 	Vec3 ApproxPosition() restrict(amp);
 
 	float RayHitDistance(Ray r) restrict(amp);
 
-	bool RayHit(Ray r) restrict(amp);
+	float CorrectDistance(Ray r, float d) restrict(amp);
 
-	Vec3 IntersectionPoint(Ray* Ray, float Distance) restrict(amp);
+	bool RayHit(Ray r) restrict(amp);
 
 	Vec3 IntersectionPoint(Ray r, float Distance) restrict(amp) {
 		SceneObject::IntersectionPoint(r, Distance);

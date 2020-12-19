@@ -1,5 +1,9 @@
 #include "Sphere.h"
 
+Vec3 Sphere::ApproxPosition() restrict(amp) {
+	return Center;
+}
+
 float Sphere::RayHitDistance(Ray r) restrict(amp) {
 	Vec3 oc = r.Origin.operator-(Center);
 
@@ -27,10 +31,10 @@ Vec3 Sphere::IntersectionPoint(Ray* Ray, float Distance) restrict(amp) {
 	return Ray->Origin + (Ray->Direction * Distance);
 }
 
-Ray Sphere::Sphere_PointNormal(Vec3 Point, Ray* oRay) restrict(amp) {
+Ray Sphere::PointNormal(Vec3 Point, Ray oRay) restrict(amp) {
 	Ray nRay;
 
-	nRay.Direction = (((Point - Center) * oRay->Direction.dot(Point - Center)) * 2 - oRay->Direction) * -1;
+	nRay.Direction = (((Point - Center) * oRay.Direction.dot(Point - Center)) * 2 - oRay.Direction) * -1;
 	nRay.Origin = Point;
 
 	return nRay;
