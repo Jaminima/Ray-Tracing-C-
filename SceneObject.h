@@ -13,9 +13,9 @@ public:
 	float reflectivity = 0.9f;
 	Color color = Color(255, 255, 255);
 
-	SceneObject() restrict(amp,cpu) {}
+	SceneObject() restrict(amp, cpu) {}
 
-	Vec3 ApproxPosition() restrict(amp,cpu) {
+	Vec3 ApproxPosition() restrict(amp, cpu) {
 		return Vec3(0, 0, 0);
 	}
 

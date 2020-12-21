@@ -2,7 +2,7 @@
 #include "Const.h"
 
 void KeyboardDepressed(unsigned char key, int x, int y) {
-	Vec3 camMove(0,0,0);
+	Vec3 camMove(0, 0, 0);
 
 	if (key == 'w') camMove.z += camMoveStep;
 	if (key == 's') camMove.z -= camMoveStep;
@@ -16,9 +16,9 @@ void KeyboardDepressed(unsigned char key, int x, int y) {
 }
 
 void MouseMove(int x, int y) {
-	int movex = px_half - x, movey = py_half-y;
+	int movex = px_half - x, movey = py_half - y;
 
-	mainCamera.RotateCamera(Vec3(movey*camSensitvity, -movex*camSensitvity, 0));
+	mainCamera.RotateCamera(Vec3(movey * camSensitvity, -movex * camSensitvity, 0));
 
 	glutWarpPointer(px_half, py_half);
 }
