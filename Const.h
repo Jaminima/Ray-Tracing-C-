@@ -11,3 +11,5 @@ const int reflectionLimit = 100, lightHitLimit = 100;
 const bool runOnCpu = false;
 
 extern Camera mainCamera;
+
+const float camMoveStep = 0.1f;

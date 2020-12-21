@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include "Rendering.h"
 #include "Aliasing.h"
+#include "Inputs.h"
 
 Color* rgbBuffers = (Color*)malloc(2 * px * py * sizeof(Color));
 
@@ -54,6 +55,7 @@ void SetupFrame(int argc, char** argv) {
 	glutCreateWindow("glDrawPixels example");
 
 	glutDisplayFunc(drawFrame);
+	glutKeyboardFunc(KeyboardDepressed);
 	glutIdleFunc(triggerReDraw);
 
 	glutMainLoop();

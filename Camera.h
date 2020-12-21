@@ -51,6 +51,10 @@ public:
 		return dir;
 	}
 
+	void MoveCamera(Vec3 dir) {
+		Position += RotateDirection(dir);
+	}
+
 	int degreesFOV = 90; //90 Normal, 180 Wide, 180> 180 but W---I---D---E
 	float fov = degreesFOV / 90.0f;
 };
