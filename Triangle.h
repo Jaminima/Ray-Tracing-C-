@@ -3,9 +3,9 @@
 
 class Triangle : public SceneObject {
 public:
-	Vec3 Corners[3]; //Triangle
+	Vec3 Corners[3]{ Vec3(0,0,5),Vec3(5,5,0),Vec3(10,0,-5) }; //Triangle
 
-	Triangle(){}
+	Triangle() {}
 	Triangle() restrict(amp) {}
 
 	Vec3 ApproxPosition() restrict(amp) {
@@ -60,7 +60,7 @@ public:
 		nRay.Direction.normalise();
 
 		nRay.Direction = (nRay.Direction + (nRay.Direction * N * V) * 2) * -1;
-		nRay.Origin = Point + (nRay.Direction * 0.0000001f);
+		nRay.Origin = Point /*+ (nRay.Direction * 0.0000001f)*/;
 
 		return nRay;
 	}

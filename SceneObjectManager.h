@@ -8,7 +8,7 @@ enum ObjectType {
 	_Triangle
 };
 
-class SceneObjectManager{
+class SceneObjectManager {
 private:
 	ObjectType type = None;
 
@@ -16,7 +16,7 @@ private:
 	Triangle _triangle;
 
 public:
-	float reflectivity() restrict(amp){
+	float reflectivity() restrict(amp) {
 		switch (type)
 		{
 		case _Sphere:
@@ -28,7 +28,7 @@ public:
 		}
 	}
 
-	Color color() restrict(amp){
+	Color color() restrict(amp) {
 		switch (type)
 		{
 		case _Sphere:
@@ -40,14 +40,14 @@ public:
 		}
 	}
 
-	SceneObjectManager(){}
+	SceneObjectManager() {}
 
-	SceneObjectManager(Triangle _tri) {
+	void SetTriangle(Triangle _tri) {
 		_triangle = _tri;
 		type = _Triangle;
 	}
 
-	SceneObjectManager(Sphere _sph) {
+	void SetSphere(Sphere _sph) {
 		_sphere = _sph;
 		type = _Sphere;
 	}
@@ -80,10 +80,10 @@ public:
 		switch (type)
 		{
 		case _Sphere:
-			return _sphere.CorrectDistance(r,d);
+			return _sphere.CorrectDistance(r, d);
 			break;
 		case _Triangle:
-			return _triangle.CorrectDistance(r,d);
+			return _triangle.CorrectDistance(r, d);
 			break;
 		}
 	}
@@ -104,10 +104,10 @@ public:
 		switch (type)
 		{
 		case _Sphere:
-			return _sphere.IntersectionPoint(r,Distance);
+			return _sphere.IntersectionPoint(r, Distance);
 			break;
 		case _Triangle:
-			return _triangle.IntersectionPoint(r,Distance);
+			return _triangle.IntersectionPoint(r, Distance);
 			break;
 		}
 	}
@@ -116,7 +116,7 @@ public:
 		switch (type)
 		{
 		case _Sphere:
-			return _sphere.PointNormal(Point,oRay);
+			return _sphere.PointNormal(Point, oRay);
 			break;
 		case _Triangle:
 			return _triangle.PointNormal(Point, oRay);

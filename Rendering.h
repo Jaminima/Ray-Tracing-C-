@@ -76,9 +76,9 @@ Color RenderRay(Ray r, array_view<SceneObjectManager, 1> SceneObjects, array_vie
 		if (hitSphere != -1) {
 			Vec3 impact = SceneObjects[hitSphere].IntersectionPoint(hitRay, LastHit);
 
-			if (totalReflectivity==1.0f) c = c + (SceneObjects[hitSphere].color() * LightMul(impact, SceneObjects, lights));
+			if (totalReflectivity == 1.0f) c = c + (SceneObjects[hitSphere].color() * LightMul(impact, SceneObjects, lights));
 			else c = c + (SceneObjects[hitSphere].color() * LightMul(impact, SceneObjects, lights) * totalReflectivity);
-			
+
 			r = SceneObjects[hitSphere].PointNormal(impact, hitRay);
 
 			totalReflectivity *= SceneObjects[hitSphere].reflectivity();
@@ -125,9 +125,9 @@ void OrderCamera() {
 	parallel_for_each(
 		SceneView.extent,
 		[=](index<1> idx) restrict(amp) {
-			Vec3 x = SceneView[idx].ApproxPosition() - cam.Position;
-			DistanceView[idx] = sqrtf(x.dot(x));
-		}
+		Vec3 x = SceneView[idx].ApproxPosition() - cam.Position;
+		DistanceView[idx] = sqrtf(x.dot(x));
+	}
 	);
 
 	DistanceView.synchronize_async().then(SortSpheres);
@@ -144,7 +144,7 @@ void RenderScene(array_view<Color, 2> rgb) {
 	parallel_for_each(
 		rgb.extent,
 		[=](index<2> idx) restrict(amp) {
-			rgb[idx] = RenderPixel(idx, SceneView, LightView, cam);
-		}
+		rgb[idx] = RenderPixel(idx, SceneView, LightView, cam);
+	}
 	);
 }

@@ -14,10 +14,10 @@ bool pick_accelerator()
 
 	auto result = std::find_if(accs.begin(), accs.end(),
 		[](const accelerator& acc) {
-			return !acc.is_emulated &&
-				acc.supports_double_precision &&
-				!acc.has_display;
-		});
+		return !acc.is_emulated &&
+			acc.supports_double_precision &&
+			!acc.has_display;
+	});
 
 	if (result != accs.end()) {
 		chosen_one = *(result);
@@ -45,33 +45,37 @@ int main(int argc, char** argv)
 	s0.Center = Vec3(5, -5, 0);
 	s0.color = Color(0, 255, 0);
 
-	sceneObjects[0] = s0;
+	sceneObjects[0].SetSphere(s0);
 
 	Sphere s1 = Sphere();
 
 	s1.Center = Vec3(-3, 5, -4);
 	s1.color = Color(255, 0, 0);
 
-	sceneObjects[1] = s1;
+	sceneObjects[1].SetSphere(s1);
 
 	Sphere s2 = Sphere();
 
 	s2.Center = Vec3(-5, 0, -10);
 	s2.color = Color(0, 0, 255);
 
-	sceneObjects[2] = s2;
+	sceneObjects[2].SetSphere(s2);
 
 	Sphere s3 = Sphere();
 
 	s3.Center = Vec3(10, 0, -10);
 
-	sceneObjects[3] = s3;
+	sceneObjects[3].SetSphere(s3);
 
-	Sphere s4 = Sphere();
+	Triangle s4 = Triangle();
+
+	/*s4.Corners[0] = Vec3(0, 0, 0);
+	s4.Corners[1] = Vec3(5, 5, 0);
+	s4.Corners[2] = Vec3(10, 0, 0);*/
 
 	s4.color = Color(200, 200, 200);
 
-	sceneObjects[4] = s4;
+	sceneObjects[4].SetTriangle(s4);
 
 	SetupFrame(argc, argv);
 

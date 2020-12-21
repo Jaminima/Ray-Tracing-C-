@@ -13,7 +13,7 @@ public:
 	float reflectivity = 0.9f;
 	Color color = Color(255, 255, 255);
 
-	SceneObject(){}
+	SceneObject() {}
 	SceneObject() restrict(amp) {}
 
 	Vec3 ApproxPosition() restrict(amp) {

@@ -25,12 +25,6 @@
     <Filter Include="Header Files\Objects\Scene">
       <UniqueIdentifier>{bf44d47e-c00a-4864-b1e5-b22358fe6356}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Objects">
-      <UniqueIdentifier>{79416c17-7766-4d09-acf6-ffc0354f3f94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Objects\Scene">
-      <UniqueIdentifier>{5fe00d2a-e4d3-4253-b460-dfcf13cca07a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RayTracing.cpp">
