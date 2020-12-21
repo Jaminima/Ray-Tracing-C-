@@ -28,9 +28,6 @@
     <Filter Include="Resource Files\Release">
       <UniqueIdentifier>{b37f05d8-41b4-42e7-98d1-941f05ebbd88}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Debug">
-      <UniqueIdentifier>{773df524-23e9-4046-904f-6aa7438bf893}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RayTracing.cpp">
@@ -40,9 +37,6 @@
   <ItemGroup>
     <ClInclude Include="vec3.h">
       <Filter>Header Files\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="List.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Header Files\Objects</Filter>
@@ -96,15 +90,6 @@
     </Library>
     <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Release\dynamic\freeglut.lib">
       <Filter>Resource Files\Release</Filter>
-    </Library>
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\dynamic\freeglut.lib">
-      <Filter>Resource Files\Debug</Filter>
-    </Library>
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\ltcg\freeglut.lib">
-      <Filter>Resource Files\Debug</Filter>
-    </Library>
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\static\freeglut.lib">
-      <Filter>Resource Files\Debug</Filter>
     </Library>
   </ItemGroup>
   <ItemGroup>

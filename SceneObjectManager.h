@@ -16,7 +16,7 @@ private:
 	Triangle _triangle;
 
 public:
-	float reflectivity() restrict(amp) {
+	float reflectivity() restrict(amp, cpu) {
 		switch (type)
 		{
 		case _Sphere:
@@ -28,7 +28,7 @@ public:
 		}
 	}
 
-	Color color() restrict(amp) {
+	Color color() restrict(amp, cpu) {
 		switch (type)
 		{
 		case _Sphere:
@@ -52,7 +52,7 @@ public:
 		type = _Sphere;
 	}
 
-	Vec3 ApproxPosition() restrict(amp) {
+	Vec3 ApproxPosition() restrict(amp, cpu) {
 		switch (type)
 		{
 		case _Sphere:
@@ -64,7 +64,7 @@ public:
 		}
 	}
 
-	float RayHitDistance(Ray r) restrict(amp) {
+	float RayHitDistance(Ray r) restrict(amp, cpu) {
 		switch (type)
 		{
 		case _Sphere:
@@ -76,7 +76,7 @@ public:
 		}
 	}
 
-	float CorrectDistance(Ray r, float d) restrict(amp) {
+	float CorrectDistance(Ray r, float d) restrict(amp, cpu) {
 		switch (type)
 		{
 		case _Sphere:
@@ -88,7 +88,7 @@ public:
 		}
 	}
 
-	bool RayHit(Ray r) restrict(amp) {
+	bool RayHit(Ray r) restrict(amp, cpu) {
 		switch (type)
 		{
 		case _Sphere:
@@ -100,7 +100,7 @@ public:
 		}
 	}
 
-	Vec3 IntersectionPoint(Ray r, float Distance) restrict(amp) {
+	Vec3 IntersectionPoint(Ray r, float Distance) restrict(amp, cpu) {
 		switch (type)
 		{
 		case _Sphere:
@@ -112,7 +112,7 @@ public:
 		}
 	}
 
-	Ray PointNormal(Vec3 Point, Ray oRay) restrict(amp) {
+	Ray PointNormal(Vec3 Point, Ray oRay) restrict(amp, cpu) {
 		switch (type)
 		{
 		case _Sphere:

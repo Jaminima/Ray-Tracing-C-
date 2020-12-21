@@ -5,14 +5,13 @@ class Triangle : public SceneObject {
 public:
 	Vec3 Corners[3]{ Vec3(0,0,5),Vec3(5,5,0),Vec3(10,0,-5) }; //Triangle
 
-	Triangle() {}
-	Triangle() restrict(amp) {}
+	Triangle() restrict(amp, cpu) {}
 
-	Vec3 ApproxPosition() restrict(amp) {
+	Vec3 ApproxPosition() restrict(amp, cpu) {
 		return (Corners[0] + Corners[1] + Corners[2]) * (1.0f / 3);
 	}
 
-	float RayHitDistance(Ray r) restrict(amp) {
+	float RayHitDistance(Ray r) restrict(amp, cpu) {
 		Vec3 E1 = Corners[1] - Corners[0], E2 = Corners[2] - Corners[0];
 
 		Vec3 h = r.Direction.cross(E2);
@@ -40,15 +39,15 @@ public:
 		else return -1;
 	}
 
-	float CorrectDistance(Ray r, float d) restrict(amp) {
+	float CorrectDistance(Ray r, float d) restrict(amp, cpu) {
 		return (r.Origin - IntersectionPoint(r, d)).norm() / r.Origin.norm();
 	}
 
-	bool RayHit(Ray r) restrict(amp) {
+	bool RayHit(Ray r) restrict(amp, cpu) {
 		return RayHitDistance(r) != -1;
 	}
 
-	Ray PointNormal(Vec3 Point, Ray oRay) restrict(amp) {
+	Ray PointNormal(Vec3 Point, Ray oRay) restrict(amp, cpu) {
 		Ray nRay;
 
 		Vec3 V = Corners[1] - Corners[0], W = Corners[2] - Corners[0];

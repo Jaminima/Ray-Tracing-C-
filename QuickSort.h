@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sphere.h"
+#include "SceneObjectManager.h"
 #include "Const.h"
 
 void Swap(unsigned int ind1, unsigned int ind2, float* Distances, SceneObjectManager* SceneObjects) {

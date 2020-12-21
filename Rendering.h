@@ -9,7 +9,7 @@ using namespace concurrency;
 #include "GL/glut.h"
 #include "GL/freeglut.h"
 
-Vec3 LightMul(Vec3 point, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp) {
+Vec3 LightMul(Vec3 point, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp,cpu) {
 	Vec3 delta;
 	Vec3 lightmul(0, 0, 0);
 
@@ -32,7 +32,7 @@ Vec3 LightMul(Vec3 point, array_view<SceneObjectManager, 1> SceneObjects, array_
 		}
 
 		if (!hitSomthing) {
-			distance = fast_math::sqrtf(delta.dot(delta));
+			distance = sqrtf(delta.dot(delta));
 
 			lightmul = (lightmul + (lights[i].colormul * (1.0f - (distance / lights[i].FadeOff))));
 		}
@@ -49,7 +49,7 @@ Vec3 LightMul(Vec3 point, array_view<SceneObjectManager, 1> SceneObjects, array_
 	return lightmul;
 }
 
-Color RenderRay(Ray r, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp) {
+Color RenderRay(Ray r, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp,cpu) {
 	Color c(0, 0, 0);
 	float LastHit = 0.0f, totalReflectivity = 1.0f;
 	const float rayTolerance = 0.1f;
@@ -90,7 +90,7 @@ Color RenderRay(Ray r, array_view<SceneObjectManager, 1> SceneObjects, array_vie
 	return c;
 }
 
-Color RenderPixel(index<2> idx, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, Camera cam) restrict(amp) {
+Color RenderPixel(index<2> idx, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, Camera cam) restrict(amp,cpu) {
 	float vx = (idx[1] / (float)px_half) - 1,
 		vy = (idx[0] / (float)py_half) - 1;
 
@@ -140,6 +140,8 @@ void RenderScene(array_view<Color, 2> rgb) {
 	array_view<SceneObjectManager, 1> SceneView(totalSceneObjects, sceneObjects);
 
 	Camera cam = mainCamera;
+
+	//RenderPixel(index<2>(1,1), SceneView, LightView, cam);
 
 	parallel_for_each(
 		rgb.extent,

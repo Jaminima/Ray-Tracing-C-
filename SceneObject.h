@@ -13,22 +13,21 @@ public:
 	float reflectivity = 0.9f;
 	Color color = Color(255, 255, 255);
 
-	SceneObject() {}
-	SceneObject() restrict(amp) {}
+	SceneObject() restrict(amp,cpu) {}
 
-	Vec3 ApproxPosition() restrict(amp) {
+	Vec3 ApproxPosition() restrict(amp,cpu) {
 		return Vec3(0, 0, 0);
 	}
 
-	float RayHitDistance(Ray r) restrict(amp) { return 0; }
+	float RayHitDistance(Ray r) restrict(amp, cpu) { return 0; }
 
-	float CorrectDistance(Ray r, float d) restrict(amp) { return d; }
+	float CorrectDistance(Ray r, float d) restrict(amp, cpu) { return d; }
 
-	bool RayHit(Ray r) restrict(amp) { return false; }
+	bool RayHit(Ray r) restrict(amp, cpu) { return false; }
 
-	Vec3 IntersectionPoint(Ray r, float Distance) restrict(amp) {
+	Vec3 IntersectionPoint(Ray r, float Distance) restrict(amp, cpu) {
 		return r.Origin + (r.Direction * Distance);
 	}
 
-	Ray PointNormal(Vec3 Point, Ray oRay) restrict(amp) { return oRay; }
+	Ray PointNormal(Vec3 Point, Ray oRay) restrict(amp, cpu) { return oRay; }
 };
