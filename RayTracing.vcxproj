@@ -156,25 +156,24 @@
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="SceneObjectManager.h" />
     <ClInclude Include="Sphere.h" />
-    <ClInclude Include="stb_image_write.h" />
-    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="vec3.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Debug\dynamic\freeglut.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Release\dynamic\freeglut.dll">
+    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\x64\Release\dynamic\freeglut.dll">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\dynamic\freeglut.lib" />
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\ltcg\freeglut.lib" />
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\static\freeglut.lib" />
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\dynamic\freeglut.lib" />
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\ltcg\freeglut.lib" />
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\static\freeglut.lib" />
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Release\dynamic\freeglut.lib" />
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Release\ltcg\freeglut.lib" />
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Release\static\freeglut.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

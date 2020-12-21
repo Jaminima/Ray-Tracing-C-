@@ -1,10 +1,5 @@
 #include "Window.h"
 
-//#define STB_IMAGE_IMPLEMENTATION
-//#include "stb_image.h"
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
-//#include "stb_image_write.h"
-
 Camera mainCamera;
 
 bool pick_accelerator()
@@ -31,8 +26,6 @@ bool pick_accelerator()
 int main(int argc, char** argv)
 {
 	pick_accelerator();
-
-	//stbi_write_png("image.png", px, px, 4, rgb, 0);
 
 	lights[0].Position = Vec3(0, -5, 2);
 	//lights[0].colormul = Vec3(0.5f, 0.8f, 0.5f);

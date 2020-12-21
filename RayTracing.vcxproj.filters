@@ -25,6 +25,12 @@
     <Filter Include="Header Files\Objects\Scene">
       <UniqueIdentifier>{bf44d47e-c00a-4864-b1e5-b22358fe6356}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Release">
+      <UniqueIdentifier>{b37f05d8-41b4-42e7-98d1-941f05ebbd88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Debug">
+      <UniqueIdentifier>{773df524-23e9-4046-904f-6aa7438bf893}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RayTracing.cpp">
@@ -33,12 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vec3.h">
-      <Filter>Header Files\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Header Files\Librarys</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image_write.h">
       <Filter>Header Files\Librarys</Filter>
     </ClInclude>
     <ClInclude Include="List.h">
@@ -88,20 +88,28 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\dynamic\freeglut.lib">
-      <Filter>Resource Files</Filter>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Release\static\freeglut.lib">
+      <Filter>Resource Files\Release</Filter>
     </Library>
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\ltcg\freeglut.lib">
-      <Filter>Resource Files</Filter>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Release\ltcg\freeglut.lib">
+      <Filter>Resource Files\Release</Filter>
     </Library>
-    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\Win32\Debug\static\freeglut.lib">
-      <Filter>Resource Files</Filter>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Release\dynamic\freeglut.lib">
+      <Filter>Resource Files\Release</Filter>
+    </Library>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\dynamic\freeglut.lib">
+      <Filter>Resource Files\Debug</Filter>
+    </Library>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\ltcg\freeglut.lib">
+      <Filter>Resource Files\Debug</Filter>
+    </Library>
+    <Library Include="packages\freeglut.2.8.1.15\build\native\lib\v110\x64\Debug\static\freeglut.lib">
+      <Filter>Resource Files\Debug</Filter>
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Debug\dynamic\freeglut.dll">
-      <Filter>Resource Files</Filter>
+    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\x64\Release\dynamic\freeglut.dll">
+      <Filter>Resource Files\Release</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="packages\freeglut.redist.2.8.1.15\build\native\bin\v110\Win32\Release\dynamic\freeglut.dll" />
   </ItemGroup>
 </Project>
