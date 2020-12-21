@@ -141,12 +141,19 @@ void RenderScene(array_view<Color, 2> rgb) {
 
 	Camera cam = mainCamera;
 
-	//RenderPixel(index<2>(1,1), SceneView, LightView, cam);
-
-	parallel_for_each(
-		rgb.extent,
-		[=](index<2> idx) restrict(amp) {
-		rgb[idx] = RenderPixel(idx, SceneView, LightView, cam);
+	if (runOnCpu) {
+		for (unsigned int x = 0, y = 0;y < py;) {
+			rgb[y][x] = RenderPixel(index<2>(y, x), SceneView, LightView, cam);
+			x++;
+			if (x == px) { x = 0; y++; }
+		}
 	}
-	);
+	else {
+		parallel_for_each(
+			rgb.extent,
+			[=](index<2> idx) restrict(amp) {
+			rgb[idx] = RenderPixel(idx, SceneView, LightView, cam);
+		}
+		);
+	}
 }
