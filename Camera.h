@@ -14,6 +14,8 @@ public:
 	Vec3 Position = Vec3(0, 0, -20);
 	Vec3 Angle = Vec3(0, 0, 0);
 
+	Camera() { RotateCamera(Vec3(0, 0, 0)); }
+
 	void RotateCamera(Vec3 rot) {
 		Angle = rot + Angle + Vec3(Pi, Pi, Pi);
 
