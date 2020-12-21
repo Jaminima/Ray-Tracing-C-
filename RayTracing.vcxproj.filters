@@ -36,12 +36,6 @@
     <ClCompile Include="RayTracing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sphere.cpp">
-      <Filter>Source Files\Objects\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>Source Files\Objects\Scene</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vec3.h">
@@ -90,6 +84,9 @@
       <Filter>Header Files\Objects\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
+      <Filter>Header Files\Objects\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObjectManager.h">
       <Filter>Header Files\Objects\Scene</Filter>
     </ClInclude>
   </ItemGroup>

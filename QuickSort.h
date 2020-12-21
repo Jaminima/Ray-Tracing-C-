@@ -3,9 +3,9 @@
 #include "Sphere.h"
 #include "Const.h"
 
-void Swap(unsigned int ind1, unsigned int ind2, float* Distances, SceneObject* SceneObjects) {
+void Swap(unsigned int ind1, unsigned int ind2, float* Distances, SceneObjectManager* SceneObjects) {
 	float tempDist = Distances[ind1];
-	SceneObject tempObject = SceneObjects[ind1];
+	SceneObjectManager tempObject = SceneObjects[ind1];
 
 	Distances[ind1] = Distances[ind2];
 	SceneObjects[ind1] = SceneObjects[ind2];
@@ -14,7 +14,7 @@ void Swap(unsigned int ind1, unsigned int ind2, float* Distances, SceneObject* S
 	SceneObjects[ind2] = tempObject;
 }
 
-unsigned int Partition(unsigned int low, unsigned int high, float* Distances, SceneObject* SceneObjects) {
+unsigned int Partition(unsigned int low, unsigned int high, float* Distances, SceneObjectManager* SceneObjects) {
 	unsigned int pivotIndex = low;
 	float pivotValue = Distances[high];
 
@@ -28,7 +28,7 @@ unsigned int Partition(unsigned int low, unsigned int high, float* Distances, Sc
 	return pivotIndex;
 }
 
-void QuickSort(unsigned int low, unsigned int high, float* Distances, SceneObject* SceneObjects) {
+void QuickSort(unsigned int low, unsigned int high, float* Distances, SceneObjectManager* SceneObjects) {
 	if (low < high) {
 		unsigned int part = Partition(low, high, Distances, SceneObjects);
 		if (part > 0) QuickSort(low, part - 1, Distances, SceneObjects);

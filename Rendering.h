@@ -1,6 +1,6 @@
 #pragma once
 #include "Light.h"
-#include "Sphere.h"
+#include "SceneObjectManager.h"
 #include "Const.h"
 #include "QuickSort.h"
 #include <amp.h>
@@ -9,7 +9,7 @@ using namespace concurrency;
 #include "GL/glut.h"
 #include "GL/freeglut.h"
 
-Vec3 LightMul(Vec3 point, array_view<SceneObject, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp) {
+Vec3 LightMul(Vec3 point, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp) {
 	Vec3 delta;
 	Vec3 lightmul(0, 0, 0);
 
@@ -49,7 +49,7 @@ Vec3 LightMul(Vec3 point, array_view<SceneObject, 1> SceneObjects, array_view<Li
 	return lightmul;
 }
 
-Color RenderRay(Ray r, array_view<SceneObject, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp) {
+Color RenderRay(Ray r, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp) {
 	Color c(0, 0, 0);
 	float LastHit = 0.0f, totalReflectivity = 1.0f;
 	const float rayTolerance = 0.1f;
@@ -76,12 +76,12 @@ Color RenderRay(Ray r, array_view<SceneObject, 1> SceneObjects, array_view<Light
 		if (hitSphere != -1) {
 			Vec3 impact = SceneObjects[hitSphere].IntersectionPoint(hitRay, LastHit);
 
-			if (totalReflectivity==1.0f) c = c + (SceneObjects[hitSphere].color * LightMul(impact, SceneObjects, lights));
-			else c = c + (SceneObjects[hitSphere].color * LightMul(impact, SceneObjects, lights) * totalReflectivity);
+			if (totalReflectivity==1.0f) c = c + (SceneObjects[hitSphere].color() * LightMul(impact, SceneObjects, lights));
+			else c = c + (SceneObjects[hitSphere].color() * LightMul(impact, SceneObjects, lights) * totalReflectivity);
 			
 			r = SceneObjects[hitSphere].PointNormal(impact, hitRay);
 
-			totalReflectivity *= SceneObjects[hitSphere].reflectivity;
+			totalReflectivity *= SceneObjects[hitSphere].reflectivity();
 		}
 
 		reflection++;
@@ -90,7 +90,7 @@ Color RenderRay(Ray r, array_view<SceneObject, 1> SceneObjects, array_view<Light
 	return c;
 }
 
-Color RenderPixel(index<2> idx, array_view<SceneObject, 1> SceneObjects, array_view<Light, 1> lights, Camera cam) restrict(amp) {
+Color RenderPixel(index<2> idx, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, Camera cam) restrict(amp) {
 	float vx = (idx[1] / (float)px_half) - 1,
 		vy = (idx[0] / (float)py_half) - 1;
 
@@ -108,7 +108,7 @@ Color RenderPixel(index<2> idx, array_view<SceneObject, 1> SceneObjects, array_v
 	return RenderRay(r, SceneObjects, lights);
 }
 
-SceneObject* sceneObjects = new SceneObject[totalSceneObjects];
+SceneObjectManager* sceneObjects = new SceneObjectManager[totalSceneObjects];
 Light* lights = new Light[totalLights];
 float* distances = new float[totalSceneObjects];
 
@@ -117,7 +117,7 @@ void SortSpheres() {
 }
 
 void OrderCamera() {
-	array_view<SceneObject, 1> SceneView(totalSceneObjects, sceneObjects);
+	array_view<SceneObjectManager, 1> SceneView(totalSceneObjects, sceneObjects);
 	array_view<float, 1> DistanceView(totalSceneObjects, distances);
 
 	Camera cam = mainCamera;
@@ -137,7 +137,7 @@ void OrderCamera() {
 
 void RenderScene(array_view<Color, 2> rgb) {
 	array_view<Light, 1> LightView(totalLights, lights);
-	array_view<SceneObject, 1> SceneView(totalSceneObjects, sceneObjects);
+	array_view<SceneObjectManager, 1> SceneView(totalSceneObjects, sceneObjects);
 
 	Camera cam = mainCamera;
 
