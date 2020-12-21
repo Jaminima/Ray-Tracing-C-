@@ -12,4 +12,4 @@ const bool runOnCpu = false;
 
 extern Camera mainCamera;
 
-const float camMoveStep = 0.1f;
+const float camMoveStep = 0.1f, camSensitvity = 0.001f;

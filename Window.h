@@ -55,8 +55,10 @@ void SetupFrame(int argc, char** argv) {
 	glutCreateWindow("glDrawPixels example");
 
 	glutDisplayFunc(drawFrame);
-	glutKeyboardFunc(KeyboardDepressed);
 	glutIdleFunc(triggerReDraw);
+
+	glutPassiveMotionFunc(MouseMove);
+	glutKeyboardFunc(KeyboardDepressed);
 
 	glutMainLoop();
 }
