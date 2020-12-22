@@ -40,7 +40,7 @@ public:
 		}
 	}
 
-	SceneObjectManager() restrict(amp,cpu) {}
+	SceneObjectManager() restrict(amp, cpu) {}
 
 	void SetTriangle(Triangle _tri) {
 		_triangle = _tri;

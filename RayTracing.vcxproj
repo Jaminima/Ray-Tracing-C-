@@ -152,7 +152,6 @@
     <ClInclude Include="RayRendering.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="QuickSort.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="SceneObjectManager.h" />

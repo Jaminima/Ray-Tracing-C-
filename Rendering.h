@@ -21,41 +21,14 @@ Color RenderPixel(index<2> idx, array_view<SceneObjectManager, 1> SceneObjects, 
 
 	Direction = cam.RotateDirection(Direction);
 
-	/*Direction += cam.Angle;
-	Direction.normalise();*/
-
 	Ray r(cam.Position, Direction);
 	return RenderRay(r, cam, SceneObjects, lights);
 }
-
-//void SortSpheres() {
-//	QuickSort(0, totalSceneObjects - 1, distances, sceneObjects);
-//}
-//
-//void OrderCamera() {
-//	array_view<SceneObjectManager, 1> SceneView(totalSceneObjects, sceneObjects);
-//	array_view<float, 1> DistanceView(totalSceneObjects, distances);
-//
-//	Camera cam = mainCamera;
-//
-//	parallel_for_each(
-//		SceneView.extent,
-//		[=](index<1> idx) restrict(amp) {
-//		Vec3 x = SceneView[idx].ApproxPosition() - cam.Position;
-//		DistanceView[idx] = sqrtf(x.dot(x));
-//	}
-//	);
-//
-//	DistanceView.synchronize_async().then(SortSpheres);
-//
-//	SceneView.refresh();
-//}
 
 void RenderScene(array_view<Color, 2> rgb) {
 	array_view<Light, 1> LightView(totalLights, lights);
 	array_view<SceneObjectManager, 1> SceneView(totalSceneObjects, sceneObjects);
 
-	//mainCamera.Position.x += 0.1f;
 	Camera cam = mainCamera;
 
 	if (runOnCpu) {

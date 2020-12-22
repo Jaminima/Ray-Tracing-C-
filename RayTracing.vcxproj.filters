@@ -50,9 +50,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="QuickSort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Aliasing.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>

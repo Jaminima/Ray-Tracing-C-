@@ -39,8 +39,8 @@ Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObj
 
 		r = Ray(lights[0].Position, delta * -1);
 
-		if (!HitsObject(r, dist, SceneObjects)) { 
-			lightmul += lights[i].colormul * (1.0f-(dist / lights[i].FadeOff)); 
+		if (!HitsObject(r, dist, SceneObjects)) {
+			lightmul += lights[i].colormul * (1.0f - (dist / lights[i].FadeOff));
 			lightHits++;
 		}
 	}
@@ -98,7 +98,7 @@ Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObject
 
 		if (isFirst) c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights));
 
-		else c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights) * (curObj.reflectivity()/reflections));
+		else c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights) * (curObj.reflectivity() / reflections));
 
 		isFirst = false;
 	}
