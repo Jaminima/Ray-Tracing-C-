@@ -28,9 +28,7 @@ Hit ClosestHit(Ray r, array_view<SceneObjectManager, 1> SceneObjects, int ignore
 	Hit closest = Hit();
 
 	for (unsigned int i = 0;i < SceneObjects.extent.size();i++) {
-
 		if (i != ignoreObject) {
-
 			float dist = SceneObjects[i].RayHitDistance(r);
 
 			if (dist > 0) {

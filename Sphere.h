@@ -8,6 +8,36 @@ public:
 
 	Sphere() restrict(amp, cpu) { }
 
+	Sphere(float radius, Vec3 Center) restrict(amp, cpu) {
+		this->radius = radius;
+		this->Center = Center;
+	}
+
+	Sphere(float radius, float x, float y, float z) restrict(amp, cpu) {
+		this->radius = radius;
+		this->Center = Vec3(x, y, z);
+	}
+
+	Sphere(float radius, Vec3 Center, Color c) restrict(amp, cpu) : Sphere(radius, Center) {
+		this->color = c;
+	}
+
+	Sphere(float radius, Vec3 Center, Color c, float reflectivity, float opacity) restrict(amp, cpu) : Sphere(radius, Center) {
+		this->color = c;
+		this->opacity = opacity;
+		this->reflectivity = reflectivity;
+	}
+
+	Sphere(float radius, float x, float y, float z, Color c) restrict(amp, cpu) : Sphere(radius, x, y, z) {
+		this->color = c;
+	}
+
+	Sphere(float radius, float x, float y, float z, Color c, float reflectivity, float opacity) restrict(amp, cpu) : Sphere(radius, x, y, z) {
+		this->color = c;
+		this->opacity = opacity;
+		this->reflectivity = reflectivity;
+	}
+
 	Vec3 ApproxPosition() restrict(amp, cpu) {
 		return Center;
 	}

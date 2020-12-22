@@ -7,6 +7,44 @@ public:
 
 	Triangle() restrict(amp, cpu) {}
 
+	Triangle(Vec3 Corners[3]) restrict(amp, cpu) {
+		this->Corners[0] = Corners[0];
+		this->Corners[1] = Corners[1];
+		this->Corners[2] = Corners[2];
+	}
+
+	Triangle(Vec3 Corners[3], Color c) restrict(amp, cpu) : Triangle(Corners) {
+		this->color = c;
+	}
+
+	Triangle(Vec3 Corners[3], Color c, float reflectivity, float opacity) restrict(amp, cpu) : Triangle(Corners) {
+		this->color = c;
+		this->opacity = opacity;
+		this->reflectivity = reflectivity;
+	}
+
+	Triangle(Vec3 c1, Vec3 c2, Vec3 c3) restrict(amp, cpu) {
+		this->Corners[0] = c1;
+		this->Corners[1] = c2;
+		this->Corners[2] = c3;
+	}
+
+	Triangle(Vec3 c1, Vec3 c2, Vec3 c3, Color c) restrict(amp, cpu) {
+		this->Corners[0] = c1;
+		this->Corners[1] = c2;
+		this->Corners[2] = c3;
+		this->color = c;
+	}
+
+	Triangle(Vec3 c1, Vec3 c2, Vec3 c3, Color c, float reflectivity, float opacity) restrict(amp, cpu) {
+		this->Corners[0] = c1;
+		this->Corners[1] = c2;
+		this->Corners[2] = c3;
+		this->color = c;
+		this->opacity = opacity;
+		this->reflectivity = reflectivity;
+	}
+
 	Vec3 ApproxPosition() restrict(amp, cpu) {
 		return (Corners[0] + Corners[1] + Corners[2]) * (1.0f / 3);
 	}
