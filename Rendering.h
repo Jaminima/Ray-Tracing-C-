@@ -1,6 +1,5 @@
 #pragma once
 #include "RayRendering.h"
-#include "QuickSort.h"
 
 using namespace concurrency::fast_math;
 
