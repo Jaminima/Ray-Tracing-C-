@@ -10,7 +10,7 @@ using namespace concurrency;
 
 class SceneObject {
 public:
-	float reflectivity = 0.9f;
+	float reflectivity = 0.5f;
 	Color color = Color(255, 255, 255);
 
 	SceneObject() restrict(amp, cpu) {}
