@@ -38,7 +38,7 @@ void triggerReDraw() {
 		startTime = clock();
 	}
 
-	OrderCamera();
+	//OrderCamera();
 
 	pendingFrameCopy.wait();
 }
@@ -52,8 +52,8 @@ void SetupFrame(int argc, char** argv) {
 	glutDisplayFunc(drawFrame);
 	glutIdleFunc(triggerReDraw);
 
-	glutPassiveMotionFunc(MouseMove);
-	glutKeyboardFunc(KeyboardDepressed);
+	//glutPassiveMotionFunc(MouseMove);
+	//glutKeyboardFunc(KeyboardDepressed);
 
 	glutMainLoop();
 }
