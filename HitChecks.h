@@ -19,9 +19,13 @@ bool HitsObject(Ray r, float distLimit, array_view<SceneObjectManager, 1> SceneO
 	for (unsigned int i = 0;i < SceneObjects.extent.size();i++) {
 		float dist = SceneObjects[i].RayHitDistance(r);
 
-		if (dist > 0 && dist < distLimit) return true;
+		if (dist > 0) {
+			dist = SceneObjects[i].CorrectDistance(r, dist);
+
+			if (dist < distLimit) return false;
+		}
 	}
-	return false;
+	return true;
 }
 
 Hit ClosestHit(Ray r, array_view<SceneObjectManager, 1> SceneObjects, int ignoreObject = -1) restrict(amp, cpu) {

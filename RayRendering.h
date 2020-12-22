@@ -15,7 +15,7 @@ Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObj
 
 		float dist = sqrtf(delta.dot(delta));
 
-		r = Ray(lights[0].Position, delta * -1);
+		r = Ray(lights[0].Position, delta);
 
 		if (!HitsObject(r, dist, SceneObjects)) {
 			lightmul += lights[i].colormul * (1.0f - (dist / lights[i].FadeOff));
@@ -31,6 +31,8 @@ Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObj
 
 	return lightmul;
 }
+
+
 
 Color RenderRayReflections(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, int ignoreObject) restrict(amp, cpu) {
 	Color c(0, 0, 0);
@@ -66,6 +68,7 @@ Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObject
 	SceneObjectManager firstObj;
 
 	if (closest.hasHit) {
+
 		firstObj = SceneObjects[closest.objectIndex];
 
 		c = c + (firstObj.color() * LightMul(closest.intersect, cam, SceneObjects, lights));

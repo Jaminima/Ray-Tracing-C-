@@ -25,10 +25,10 @@ int main(int argc, char** argv)
 {
 	pick_accelerator();
 
-	lights[0].Position = Vec3(0, -5, 2);
+	lights[0].Position = Vec3(0, -2, -5);
 	lights[0].colormul = Vec3(0.5f, 0.8f, 0.5f);
 
-	lights[1].Position = Vec3(-5, 5, 1);
+	lights[1].Position = Vec3(-5, 2, -5);
 	lights[1].colormul = Vec3(0.8f, 0.0f, 0.8f);
 
 	Sphere s0 = Sphere(3, Vec3(5, -5, 0), Color(0, 255, 0));
