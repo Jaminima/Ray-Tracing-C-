@@ -82,7 +82,7 @@ Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObject
 
 	Vec3 intersect;
 
-	SceneObjectManager curObj;
+	SceneObjectManager curObj, firstObj;
 
 	while ((closest.hasHit || isFirst) && reflections < reflectionLimit) {
 		closest = ClosestHit(r, SceneObjects);
@@ -96,12 +96,14 @@ Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObject
 
 		reflections++;
 
-		if (isFirst) c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights));
+		if (isFirst) { c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights)); firstObj = curObj; }
 
 		else c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights) * (curObj.reflectivity() / reflections));
 
 		isFirst = false;
 	}
+
+	c = c * firstObj.opacity();
 
 	return c;
 }

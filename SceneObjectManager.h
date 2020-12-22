@@ -16,6 +16,18 @@ private:
 	Triangle _triangle;
 
 public:
+	float opacity() restrict(amp, cpu) {
+		switch (type)
+		{
+		case _Sphere:
+			return _sphere.opacity;
+			break;
+		case _Triangle:
+			return _triangle.opacity;
+			break;
+		}
+	}
+
 	float reflectivity() restrict(amp, cpu) {
 		switch (type)
 		{
