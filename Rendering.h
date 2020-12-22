@@ -2,8 +2,7 @@
 #include "RayRendering.h"
 #include "QuickSort.h"
 
-#include "GL/glut.h"
-#include "GL/freeglut.h"
+using namespace concurrency::fast_math;
 
 Camera mainCamera = Camera();
 

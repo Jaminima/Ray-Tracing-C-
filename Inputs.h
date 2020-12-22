@@ -1,5 +1,7 @@
 #pragma once
 #include "Const.h"
+#include "GL/glut.h"
+#include "GL/freeglut.h"
 
 void KeyboardDepressed(unsigned char key, int x, int y) {
 	Vec3 camMove(0, 0, 0);

@@ -3,7 +3,8 @@
 #include "SceneObjectManager.h"
 #include "Const.h"
 #include <amp.h>
-using namespace concurrency;
+//using namespace concurrency;
+using namespace concurrency::fast_math;
 
 struct Hit {
 public:
@@ -36,15 +37,21 @@ Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObj
 
 		float dist = sqrtf(delta.dot(delta));
 
-		r = Ray(point, delta);
+		r = Ray(lights[0].Position, delta * -1);
 
 		if (!HitsObject(r, dist, SceneObjects)) { 
-			lightmul += lights[i].colormul * (dist / lights[i].FadeOff); 
+			lightmul += lights[i].colormul * (1.0f-(dist / lights[i].FadeOff)); 
 			lightHits++;
 		}
 	}
 
-	return lightmul * (1.0f/lightHits);
+	//lightmul = lightmul * (1.0f / lightHits);
+
+	lightmul.x = lightmul.x > 1 ? 1 : lightmul.x;
+	lightmul.y = lightmul.y > 1 ? 1 : lightmul.y;
+	lightmul.z = lightmul.z > 1 ? 1 : lightmul.z;
+
+	return lightmul;
 }
 
 Hit ClosestHit(Ray r, array_view<SceneObjectManager, 1> SceneObjects) restrict(amp, cpu) {
@@ -84,7 +91,9 @@ Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObject
 		intersect = SceneObjects[closest.objectIndex].IntersectionPoint(r, closest.distance);
 		r = SceneObjects[closest.objectIndex].PointNormal(intersect, r);
 
-		c = c + (SceneObjects[closest.objectIndex].color() * LightMul(intersect, cam, SceneObjects, lights));
+		reflections++;
+
+		c = c + (SceneObjects[closest.objectIndex].color() * LightMul(intersect, cam, SceneObjects, lights) * (1.0f/reflections));
 	}
 
 	return c;
