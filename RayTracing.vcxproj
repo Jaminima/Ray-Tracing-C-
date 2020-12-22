@@ -149,6 +149,7 @@
     <ClInclude Include="Const.h" />
     <ClInclude Include="Aliasing.h" />
     <ClInclude Include="Inputs.h" />
+    <ClInclude Include="RayRendering.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="QuickSort.h" />

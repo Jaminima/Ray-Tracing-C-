@@ -14,7 +14,7 @@ time_t startTime = clock();
 
 void drawFrame()
 {
-	glDrawPixels(px, py, GL_RGBA, GL_UNSIGNED_BYTE, &rgbBuffers[px * py * !LockedBuffer]);
+	glDrawPixels(px, py, GL_RGBA, GL_UNSIGNED_BYTE, &rgbBuffers[px * py * LockedBuffer]);
 	glutSwapBuffers();
 }
 
@@ -28,10 +28,6 @@ void triggerReDraw() {
 	RenderScene(rgb[!LockedBuffer]);
 	FXAA(rgb[!LockedBuffer]);
 
-	glutPostRedisplay();
-
-	LockedBuffer = !LockedBuffer;
-
 	if (clock() - startTime >= 1000) {
 		printf_s("You averaged %d fps\n", framesInSec);
 		framesInSec = 0;
@@ -41,6 +37,10 @@ void triggerReDraw() {
 	//OrderCamera();
 
 	pendingFrameCopy.wait();
+
+	glutPostRedisplay();
+
+	LockedBuffer = !LockedBuffer;
 }
 
 void SetupFrame(int argc, char** argv) {
@@ -53,7 +53,7 @@ void SetupFrame(int argc, char** argv) {
 	glutIdleFunc(triggerReDraw);
 
 	//glutPassiveMotionFunc(MouseMove);
-	//glutKeyboardFunc(KeyboardDepressed);
+	glutKeyboardFunc(KeyboardDepressed);
 
 	glutMainLoop();
 }

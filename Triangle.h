@@ -39,9 +39,9 @@ public:
 		else return -1;
 	}
 
-	float CorrectDistance(Ray r, float d) restrict(amp, cpu) {
+	/*float CorrectDistance(Ray r, float d) restrict(amp, cpu) {
 		return (r.Origin - IntersectionPoint(r, d)).norm() / r.Origin.norm();
-	}
+	}*/
 
 	bool RayHit(Ray r) restrict(amp, cpu) {
 		return RayHitDistance(r) != -1;

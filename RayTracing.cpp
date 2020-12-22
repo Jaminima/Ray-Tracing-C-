@@ -1,7 +1,5 @@
 #include "Window.h"
 
-Camera mainCamera;
-
 bool pick_accelerator()
 {
 	std::vector<accelerator> accs = accelerator::get_all();
