@@ -40,16 +40,16 @@ public:
 		}
 	}
 
-	SceneObjectManager() {}
+	SceneObjectManager() restrict(amp,cpu) {}
 
 	void SetTriangle(Triangle _tri) {
 		_triangle = _tri;
-		type = _Triangle;
+		type = ObjectType::_Triangle;
 	}
 
 	void SetSphere(Sphere _sph) {
 		_sphere = _sph;
-		type = _Sphere;
+		type = ObjectType::_Sphere;
 	}
 
 	Vec3 ApproxPosition() restrict(amp, cpu) {

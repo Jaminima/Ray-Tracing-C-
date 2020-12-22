@@ -78,22 +78,29 @@ Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObject
 	Hit closest = Hit();
 
 	bool isFirst = true;
-	float reflections = 0;
+	unsigned int reflections = 0;
+	float totalReflectivity = 0;
 
 	Vec3 intersect;
+
+	SceneObjectManager curObj;
 
 	while ((closest.hasHit || isFirst) && reflections < reflectionLimit) {
 		isFirst = false;
 		closest = ClosestHit(r, SceneObjects);
 
+		curObj = SceneObjects[closest.objectIndex];
+
 		if (!closest.hasHit) break;
 
-		intersect = SceneObjects[closest.objectIndex].IntersectionPoint(r, closest.distance);
-		r = SceneObjects[closest.objectIndex].PointNormal(intersect, r);
+		intersect = curObj.IntersectionPoint(r, closest.distance);
+		r = curObj.PointNormal(intersect, r);
 
 		reflections++;
 
-		c = c + (SceneObjects[closest.objectIndex].color() * LightMul(intersect, cam, SceneObjects, lights) * (1.0f/reflections));
+		totalReflectivity += curObj.reflectivity();
+
+		c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights) * (curObj.reflectivity()/totalReflectivity));
 	}
 
 	return c;
