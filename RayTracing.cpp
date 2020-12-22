@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
 	s2.Center = Vec3(-5, 0, -10);
 	s2.color = Color(0, 0, 255);
-	s2.opacity = 0.5f;
+	//s2.opacity = 0.5f;
 
 	sceneObjects[2].SetSphere(s2);
 

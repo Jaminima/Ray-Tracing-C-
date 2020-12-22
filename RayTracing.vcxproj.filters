@@ -80,6 +80,9 @@
     <ClInclude Include="RayRendering.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="HitChecks.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

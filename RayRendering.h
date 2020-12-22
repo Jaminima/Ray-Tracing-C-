@@ -1,28 +1,6 @@
 #pragma once
-#include "Light.h"
-#include "SceneObjectManager.h"
-#include "Const.h"
-#include <amp.h>
-//using namespace concurrency;
+#include "HitChecks.h"
 using namespace concurrency::fast_math;
-
-struct Hit {
-public:
-	bool hasHit = false;
-	float distance = 0;
-	unsigned int objectIndex = 0;
-
-	Hit() restrict(amp, cpu) {}
-};
-
-bool HitsObject(Ray r, float distLimit, array_view<SceneObjectManager, 1> SceneObjects) restrict(amp, cpu) {
-	for (unsigned int i = 0;i < SceneObjects.extent.size();i++) {
-		float dist = SceneObjects[i].RayHitDistance(r);
-
-		if (dist > 0 && dist < distLimit) return true;
-	}
-	return false;
-}
 
 Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp, cpu) {
 	Vec3 lightmul(0, 0, 0);
@@ -54,56 +32,51 @@ Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObj
 	return lightmul;
 }
 
-Hit ClosestHit(Ray r, array_view<SceneObjectManager, 1> SceneObjects) restrict(amp, cpu) {
-	Hit closest = Hit();
 
-	for (unsigned int i = 0;i < SceneObjects.extent.size();i++) {
-		float dist = SceneObjects[i].RayHitDistance(r);
 
-		if (dist > 0) {
-			dist = SceneObjects[i].CorrectDistance(r, dist);
-
-			if (dist < closest.distance || !closest.hasHit)
-			{
-				closest.distance = dist; closest.objectIndex = i; closest.hasHit = true;
-			}
-		}
-	}
-
-	return closest;
-}
-
-Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp, cpu) {
+Color RenderRayReflections(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, int ignoreObject) restrict(amp, cpu) {
 	Color c(0, 0, 0);
 	Hit closest = Hit();
 
 	bool isFirst = true;
-	unsigned int reflections = 0;
+	unsigned int reflections = 1;
 
-	Vec3 intersect;
-
-	SceneObjectManager curObj, firstObj;
+	SceneObjectManager curObj;
 
 	while ((closest.hasHit || isFirst) && reflections < reflectionLimit) {
-		closest = ClosestHit(r, SceneObjects);
+		closest = ClosestHit(r, SceneObjects, ignoreObject);
 
 		curObj = SceneObjects[closest.objectIndex];
 
 		if (!closest.hasHit) break;
 
-		intersect = curObj.IntersectionPoint(r, closest.distance);
-		r = curObj.PointNormal(intersect, r);
+		r = curObj.PointNormal(closest.intersect, r);
 
 		reflections++;
-
-		if (isFirst) { c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights)); firstObj = curObj; }
-
-		else c = c + (curObj.color() * LightMul(intersect, cam, SceneObjects, lights) * (curObj.reflectivity() / reflections));
-
 		isFirst = false;
+
+		c = c + (curObj.color() * LightMul(closest.intersect, cam, SceneObjects, lights) * (curObj.reflectivity() / reflections));
 	}
 
-	c = c * firstObj.opacity();
-
 	return c;
+}
+
+Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp, cpu) {
+	Color c(0, 0, 0);
+	Hit closest = ClosestHit(r, SceneObjects);
+
+	SceneObjectManager firstObj;
+
+	if (closest.hasHit) {
+
+		firstObj = SceneObjects[closest.objectIndex];
+
+		c = c + (firstObj.color() * LightMul(closest.intersect, cam, SceneObjects, lights));
+
+		c = c + RenderRayReflections(
+			firstObj.PointNormal(closest.intersect, r),
+			cam, SceneObjects, lights, closest.objectIndex);
+	}
+
+	return c * firstObj.opacity();
 }
