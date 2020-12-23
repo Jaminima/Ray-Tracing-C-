@@ -4,6 +4,9 @@
 #include "Aliasing.h"
 #include "Inputs.h"
 
+#include "GL/glut.h"
+#include "GL/freeglut.h"
+
 Color* rgbBuffers = (Color*)malloc(2 * px * py * sizeof(Color));
 
 array_view<Color, 3> rgb(2, py, px, rgbBuffers);
@@ -23,14 +26,10 @@ Concurrency::completion_future pendingFrameCopy;
 void triggerReDraw() {
 	framesInSec++;
 
-	pendingFrameCopy = rgb[LockedBuffer].synchronize_async();
+	pendingFrameCopy = rgb[!LockedBuffer].synchronize_async();
 
 	RenderScene(rgb[!LockedBuffer]);
 	FXAA(rgb[!LockedBuffer]);
-
-	glutPostRedisplay();
-
-	LockedBuffer = !LockedBuffer;
 
 	if (clock() - startTime >= 1000) {
 		printf_s("You averaged %d fps\n", framesInSec);
@@ -38,7 +37,9 @@ void triggerReDraw() {
 		startTime = clock();
 	}
 
-	OrderCamera();
+	glutPostRedisplay();
+
+	LockedBuffer = !LockedBuffer;
 
 	pendingFrameCopy.wait();
 }
@@ -52,7 +53,7 @@ void SetupFrame(int argc, char** argv) {
 	glutDisplayFunc(drawFrame);
 	glutIdleFunc(triggerReDraw);
 
-	glutPassiveMotionFunc(MouseMove);
+	//glutPassiveMotionFunc(MouseMove);
 	glutKeyboardFunc(KeyboardDepressed);
 
 	glutMainLoop();
