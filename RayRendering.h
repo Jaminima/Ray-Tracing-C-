@@ -2,8 +2,8 @@
 #include "HitChecks.h"
 using namespace concurrency::fast_math;
 
-Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp, cpu) {
-	Vec3 lightmul(0, 0, 0);
+Vec3 LightMul(Vec3 point, Camera cam, Vec3 WorldLight, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp, cpu) {
+	Vec3 lightmul = Vec3(WorldLight);
 
 	Vec3 delta;
 	Ray r;
@@ -34,7 +34,7 @@ Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObj
 
 
 
-Color RenderRayReflections(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, int ignoreObject) restrict(amp, cpu) {
+Color RenderRayReflections(Ray r, Camera cam, Vec3 WorldLight, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, int ignoreObject) restrict(amp, cpu) {
 	Color c(0, 0, 0);
 	Hit closest = Hit();
 
@@ -55,13 +55,13 @@ Color RenderRayReflections(Ray r, Camera cam, array_view<SceneObjectManager, 1> 
 		reflections++;
 		isFirst = false;
 
-		c = c + (curObj.color() * LightMul(closest.intersect, cam, SceneObjects, lights) * (curObj.reflectivity() / reflections));
+		c = c + (curObj.color() * LightMul(closest.intersect, cam, WorldLight, SceneObjects, lights) * (curObj.reflectivity() / reflections));
 	}
 
 	return c;
 }
 
-Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp, cpu) {
+Color RenderRay(Ray r, Camera cam, Vec3 WorldLight, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights) restrict(amp, cpu) {
 	Color c(0, 0, 0);
 	Hit closest = ClosestHit(r, SceneObjects);
 
@@ -71,11 +71,11 @@ Color RenderRay(Ray r, Camera cam, array_view<SceneObjectManager, 1> SceneObject
 
 		firstObj = SceneObjects[closest.objectIndex];
 
-		c = c + (firstObj.color() * LightMul(closest.intersect, cam, SceneObjects, lights));
+		c = c + (firstObj.color() * LightMul(closest.intersect, cam, WorldLight, SceneObjects, lights));
 
 		c = c + RenderRayReflections(
 			firstObj.PointNormal(closest.intersect, r),
-			cam, SceneObjects, lights, closest.objectIndex);
+			cam, WorldLight, SceneObjects, lights, closest.objectIndex);
 	}
 
 	return c * firstObj.opacity();
