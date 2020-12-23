@@ -11,11 +11,11 @@ Vec3 LightMul(Vec3 point, Camera cam, array_view<SceneObjectManager, 1> SceneObj
 	unsigned int lightHits = 0;
 
 	for (unsigned int i = 0;i < lights.extent.size();i++) {
-		delta = point - lights[i].Position;
+		delta = lights[i].Position - point;
 
 		float dist = sqrtf(delta.dot(delta));
 
-		r = Ray(lights[0].Position, delta);
+		r = Ray(point + (delta*0.01f), delta * -1);
 
 		if (!HitsObject(r, dist, SceneObjects)) {
 			lightmul += lights[i].colormul * (1.0f - (dist / lights[i].FadeOff));

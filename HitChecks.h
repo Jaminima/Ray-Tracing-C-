@@ -22,7 +22,7 @@ bool HitsObject(Ray r, float distLimit, array_view<SceneObjectManager, 1> SceneO
 		if (dist > 0) {
 			dist = SceneObjects[i].CorrectDistance(r, dist);
 
-			if (dist < distLimit) return false;
+			if (dist <= distLimit) return false;
 		}
 	}
 	return true;
