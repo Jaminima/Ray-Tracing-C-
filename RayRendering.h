@@ -32,8 +32,6 @@ Vec3 LightMul(Vec3 point, Camera cam, Vec3 WorldLight, array_view<SceneObjectMan
 	return lightmul;
 }
 
-
-
 Color RenderRayReflections(Ray r, Camera cam, Vec3 WorldLight, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, int ignoreObject) restrict(amp, cpu) {
 	Color c(0, 0, 0);
 	Hit closest = Hit();
@@ -78,5 +76,9 @@ Color RenderRay(Ray r, Camera cam, Vec3 WorldLight, array_view<SceneObjectManage
 			cam, WorldLight, SceneObjects, lights, closest.objectIndex);
 	}
 
-	return c * firstObj.opacity();
+	if (firstObj.opacity() != 1) {
+		c = c * firstObj.opacity();
+		c = c + (RenderRayReflections(Ray(closest.intersect, r.Direction), cam, WorldLight, SceneObjects, lights, closest.objectIndex) * (1-firstObj.opacity()));
+	}
+	return c;
 }

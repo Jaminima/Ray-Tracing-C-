@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 
 	sceneObjects[1].SetSphere(s1);
 
-	Sphere s2 = Sphere(3, Vec3(-5, 0, -10), Color(0, 0, 255));
+	Sphere s2 = Sphere(3, Vec3(-2, 0, -10), Color(0, 0, 255), 0, 0.1f);
 
 	sceneObjects[2].SetSphere(s2);
 
