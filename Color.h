@@ -1,7 +1,8 @@
 #pragma once
 #include "vec3.h"
 
-struct Color {
+struct Color
+{
 public:
 	unsigned int rgba = 0x0F000000;
 
@@ -15,11 +16,13 @@ public:
 
 	Vec3 GetRGB() restrict(amp, cpu) { return Vec3(GetR(), GetG(), GetB()); }
 
-	Color(unsigned int r, unsigned int g, unsigned int b) restrict(amp, cpu) {
+	Color(unsigned int r, unsigned int g, unsigned int b) restrict(amp, cpu)
+	{
 		rgba |= ((b & 0xFF) << 16) | ((g & 0xFF) << 8) | ((r & 0xFF));
 	}
 
-	Color operator+(Color c) restrict(amp, cpu) {
+	Color operator+(Color c) restrict(amp, cpu)
+	{
 		unsigned int b1 = (rgba >> 16) & 0xFF,
 			g1 = (rgba >> 8) & 0xFF,
 			r1 = rgba & 0xFF;
@@ -31,7 +34,8 @@ public:
 		return Color(r1 + r2, g1 + g2, b1 + b2);
 	}
 
-	Color operator * (float f) restrict(amp, cpu) {
+	Color operator *(float f) restrict(amp, cpu)
+	{
 		unsigned int b = (rgba >> 16) & 0xFF,
 			g = (rgba >> 8) & 0xFF,
 			r = rgba & 0xFF;
@@ -39,7 +43,8 @@ public:
 		return Color(r * f, g * f, b * f);
 	}
 
-	Color operator * (Vec3 f) restrict(amp, cpu) {
+	Color operator *(Vec3 f) restrict(amp, cpu)
+	{
 		unsigned int b = (rgba >> 16) & 0xFF,
 			g = (rgba >> 8) & 0xFF,
 			r = rgba & 0xFF;

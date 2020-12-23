@@ -6,13 +6,15 @@ bool pick_accelerator()
 	accelerator chosen_one;
 
 	auto result = std::find_if(accs.begin(), accs.end(),
-		[](const accelerator& acc) {
+		[](const accelerator& acc)
+	{
 		return !acc.is_emulated &&
 			acc.supports_double_precision &&
 			!acc.has_display;
 	});
 
-	if (result != accs.end()) {
+	if (result != accs.end())
+	{
 		chosen_one = *(result);
 	}
 
@@ -53,5 +55,7 @@ int main(int argc, char** argv)
 
 	SetupFrame(argc, argv);
 
-	while (true) {}
+	while (true)
+	{
+	}
 }

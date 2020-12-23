@@ -8,12 +8,14 @@ fxaa_corner = 1,
 fxaa_edge = 1,
 fxaa_sum = fxaa_center + (fxaa_adjacent * 4) + (fxaa_corner * 4) + (4 * fxaa_edge);
 
-void FXAA(array_view<Color, 2> rgbData) {
+void FXAA(array_view<Color, 2> rgbData)
+{
 	float fxaa_div = 1.0f / fxaa_sum;
 
 	parallel_for_each(
 		rgbData.extent,
-		[=](index<2>idx) restrict(amp) {
+		[=](index<2> idx) restrict(amp)
+	{
 		Vec3 aaColor = rgbData[idx].GetRGB() * fxaa_center;
 
 		Vec3 adjacentcolor = rgbData[idx[0]][idx[1] + 1].GetRGB();

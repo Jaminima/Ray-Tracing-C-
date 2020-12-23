@@ -2,13 +2,15 @@
 #include "Triangle.h"
 #include "Sphere.h"
 
-enum ObjectType {
+enum ObjectType
+{
 	None,
 	_Sphere,
 	_Triangle
 };
 
-class SceneObjectManager {
+class SceneObjectManager
+{
 private:
 	ObjectType type = None;
 
@@ -16,7 +18,8 @@ private:
 	Triangle _triangle;
 
 public:
-	float opacity() restrict(amp, cpu) {
+	float opacity() restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:
@@ -28,7 +31,8 @@ public:
 		}
 	}
 
-	float reflectivity() restrict(amp, cpu) {
+	float reflectivity() restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:
@@ -40,7 +44,8 @@ public:
 		}
 	}
 
-	Color color() restrict(amp, cpu) {
+	Color color() restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:
@@ -52,19 +57,24 @@ public:
 		}
 	}
 
-	SceneObjectManager() restrict(amp, cpu) {}
+	SceneObjectManager() restrict(amp, cpu)
+	{
+	}
 
-	void SetTriangle(Triangle _tri) {
+	void SetTriangle(Triangle _tri)
+	{
 		_triangle = _tri;
-		type = ObjectType::_Triangle;
+		type = _Triangle;
 	}
 
-	void SetSphere(Sphere _sph) {
+	void SetSphere(Sphere _sph)
+	{
 		_sphere = _sph;
-		type = ObjectType::_Sphere;
+		type = _Sphere;
 	}
 
-	Vec3 ApproxPosition() restrict(amp, cpu) {
+	Vec3 ApproxPosition() restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:
@@ -76,7 +86,8 @@ public:
 		}
 	}
 
-	float RayHitDistance(Ray r) restrict(amp, cpu) {
+	float RayHitDistance(Ray r) restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:
@@ -88,7 +99,8 @@ public:
 		}
 	}
 
-	float CorrectDistance(Ray r, float d) restrict(amp, cpu) {
+	float CorrectDistance(Ray r, float d) restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:
@@ -100,7 +112,8 @@ public:
 		}
 	}
 
-	bool RayHit(Ray r) restrict(amp, cpu) {
+	bool RayHit(Ray r) restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:
@@ -112,7 +125,8 @@ public:
 		}
 	}
 
-	Vec3 IntersectionPoint(Ray r, float Distance) restrict(amp, cpu) {
+	Vec3 IntersectionPoint(Ray r, float Distance) restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:
@@ -124,7 +138,8 @@ public:
 		}
 	}
 
-	Ray PointNormal(Vec3 Point, Ray oRay) restrict(amp, cpu) {
+	Ray PointNormal(Vec3 Point, Ray oRay) restrict(amp, cpu)
+	{
 		switch (type)
 		{
 		case _Sphere:

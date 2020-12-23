@@ -4,7 +4,8 @@
 #include <amp.h>
 using namespace concurrency::fast_math;
 
-class Camera {
+class Camera
+{
 private:
 	const float Pi = 3.14f, Pi2 = Pi * 2;
 	float cosx, cosy, cosz, sinx, siny, sinz;
@@ -16,7 +17,8 @@ public:
 
 	Camera() { RotateCamera(Vec3(0, 0, 0)); }
 
-	void RotateCamera(Vec3 rot) {
+	void RotateCamera(Vec3 rot)
+	{
 		Angle = rot + Angle + Vec3(Pi, Pi, Pi);
 
 		Angle.x = fmodf(Angle.x, Pi2) - Pi;
@@ -32,7 +34,8 @@ public:
 		sinz = sinf(Angle.z);
 	}
 
-	Vec3 RotateDirection(Vec3 dir) restrict(amp, cpu) {
+	Vec3 RotateDirection(Vec3 dir) restrict(amp, cpu)
+	{
 		dir = Vec3(
 			dir.x,
 			(cosx * dir.y) + (sinx * dir.z),
@@ -51,7 +54,8 @@ public:
 		return dir;
 	}
 
-	void MoveCamera(Vec3 dir) {
+	void MoveCamera(Vec3 dir)
+	{
 		Position += RotateDirection(dir);
 	}
 

@@ -5,13 +5,28 @@
 #include <amp.h>
 using namespace concurrency;
 
-class Ray {
+class Ray
+{
 public:
 	Vec3 Origin = Vec3(0, 0, -20), Direction;
 
-	Ray() {}
-	Ray() restrict(amp) {}
+	Ray()
+	{
+	}
 
-	Ray(Vec3 O, Vec3 D) { Origin = O; Direction = D; }
-	Ray(Vec3 O, Vec3 D) restrict(amp) { Origin = O; Direction = D; }
+	Ray() restrict(amp)
+	{
+	}
+
+	Ray(Vec3 O, Vec3 D)
+	{
+		Origin = O;
+		Direction = D;
+	}
+
+	Ray(Vec3 O, Vec3 D) restrict(amp)
+	{
+		Origin = O;
+		Direction = D;
+	}
 };

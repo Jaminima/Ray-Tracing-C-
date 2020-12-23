@@ -3,7 +3,8 @@
 #include "GL/glut.h"
 #include "GL/freeglut.h"
 
-void KeyboardDepressed(unsigned char key, int x, int y) {
+void KeyboardDepressed(unsigned char key, int x, int y)
+{
 	Vec3 camMove(0, 0, 0);
 
 	if (key == 'w') camMove.z += camMoveStep;
@@ -17,7 +18,8 @@ void KeyboardDepressed(unsigned char key, int x, int y) {
 	mainCamera.MoveCamera(camMove);
 }
 
-void MouseMove(int x, int y) {
+void MouseMove(int x, int y)
+{
 	int movex = px_half - x, movey = py_half - y;
 
 	mainCamera.RotateCamera(Vec3(movey * camSensitvity, -movex * camSensitvity, 0));
