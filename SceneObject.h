@@ -10,10 +10,18 @@ using namespace concurrency;
 
 class SceneObject {
 public:
-	float reflectivity = 0.5f;
+	float reflectivity = 0.6f, opacity = 1.0f;
 	Color color = Color(255, 255, 255);
 
 	SceneObject() restrict(amp, cpu) {}
+
+	SceneObject(Color color) restrict(amp, cpu) { this->color = color; }
+
+	SceneObject(Color color, float reflectivity, float opacity) restrict(amp, cpu) {
+		this->color = color;
+		this->reflectivity = reflectivity;
+		this->opacity = opacity;
+	}
 
 	Vec3 ApproxPosition() restrict(amp, cpu) {
 		return Vec3(0, 0, 0);
