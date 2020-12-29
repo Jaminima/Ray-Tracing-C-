@@ -10,7 +10,7 @@ Light* lights = new Light[totalLights];
 float* distances = new float[totalSceneObjects];
 
 Color RenderPixel(index<2> idx, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, Camera cam,
-	Vec3 WorldLight) restrict(amp, cpu)
+	Vec3 WorldLight, Color WorldColor) restrict(amp, cpu)
 {
 	float vx = (idx[1] / static_cast<float>(px_half)) - 1,
 		vy = (idx[0] / static_cast<float>(py_half)) - 1;
@@ -23,7 +23,7 @@ Color RenderPixel(index<2> idx, array_view<SceneObjectManager, 1> SceneObjects, 
 	Direction = cam.RotateDirection(Direction);
 
 	Ray r(cam.Position, Direction);
-	return RenderRay(r, cam, WorldLight, SceneObjects, lights);
+	return RenderRay(r, cam, WorldLight, WorldColor, SceneObjects, lights);
 }
 
 void RenderScene(array_view<Color, 2> rgb)
@@ -33,12 +33,13 @@ void RenderScene(array_view<Color, 2> rgb)
 
 	Camera cam = mainCamera;
 	Vec3 wrldLight = WorldLight;
+	Color wrldColor = WorldColor;
 
 	if (runOnCpu)
 	{
 		for (unsigned int x = 0, y = 0; y < py;)
 		{
-			rgb[y][x] = RenderPixel(index<2>(y, x), SceneView, LightView, cam, wrldLight);
+			rgb[y][x] = RenderPixel(index<2>(y, x), SceneView, LightView, cam, wrldLight, wrldColor);
 			x++;
 			if (x == px)
 			{
@@ -51,7 +52,7 @@ void RenderScene(array_view<Color, 2> rgb)
 		rgb.extent,
 		[=](index<2> idx) restrict(amp)
 	{
-		rgb[idx] = RenderPixel(idx, SceneView, LightView, cam, wrldLight);
+		rgb[idx] = RenderPixel(idx, SceneView, LightView, cam, wrldLight, wrldColor);
 	}
 	);
 }
