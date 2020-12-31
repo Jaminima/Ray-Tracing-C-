@@ -83,6 +83,12 @@
     <ClInclude Include="HitChecks.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="EquationObject.h">
+      <Filter>Header Files\Objects\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Objects\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
