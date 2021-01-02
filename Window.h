@@ -26,8 +26,8 @@ completion_future pendingFrameCopy;
 void triggerReDraw()
 {
 	framesInSec++;
-
-	pendingFrameCopy = rgb[!LockedBuffer].synchronize_async();
+	
+	pendingFrameCopy = rgb[LockedBuffer].synchronize_async();
 
 	RenderScene(rgb[!LockedBuffer]);
 	FXAA(rgb[!LockedBuffer]);
