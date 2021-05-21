@@ -34,7 +34,7 @@ struct MeshHit {
 public: 
 	float dist; unsigned int triIDX; 
 	MeshHit(float d, unsigned int  t) restrict(amp,cpu) { dist = d; triIDX = t; }
-	MeshHit() restrict(amp,cpu) { dist = -1; }
+	MeshHit() restrict(amp, cpu) { dist = -1; triIDX = 0; }
 };
 
 	MeshHit RayHitDistance(Ray r, array_view<Triangle, 1> SceneTrianglesView) restrict(amp, cpu) {
@@ -43,12 +43,12 @@ public:
 			if (triStart == -1) { return MeshHit(); }
 
 			float smallest = -1;
-			unsigned int triIDX;
+			unsigned int triIDX=0;
 			float t = 0;
 
 			for (unsigned int i = triStart; i < triEnd;i++) {
 				t = SceneTrianglesView[i].RayHitDistance(r);
-				if (t != -1 && t < smallest) { smallest = t; triIDX = i; }
+				if (t != -1 && (t < smallest || smallest == -1)) { smallest = t; triIDX = i; }
 			}
 			return MeshHit(t,triIDX);
 		}

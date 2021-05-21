@@ -34,15 +34,15 @@ int main(int argc, char** argv)
 	lights[1].colormul = Vec3(0.8f, 0.0f, 0.8f);
 
 	Triangle* t = new Triangle[]{
-			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, -1), Color(200, 200, 200)),
-			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(-10, 0, 1), Color(200, 255, 200))
+			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, -1), Color(255, 0, 255)),
+			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, -5, -1), Color(0, 255, 0))
 	};
 
 	sceneObjects[0].ImportTriangles(t, 2, sceneTriangles);
 
 	sceneObjects[0].OuterCollider = Sphere(15.0f, sceneTriangles[0].ApproxPosition());
 
-	sceneObjects[0].color = Color(255, 0, 0);
+	sceneObjects[0].color = Color(0, 0, 255);
 
 	SetupFrame(argc, argv);
 
