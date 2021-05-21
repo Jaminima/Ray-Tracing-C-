@@ -61,7 +61,7 @@ public:
 				t = SceneTrianglesView[i].RayHitDistance(r);
 				if (t != -1 && (t < smallest || smallest == -1)) { smallest = t; triIDX = i; }
 			}
-			return MeshHit(t, triIDX);
+			return MeshHit(smallest, triIDX);
 		}
 		return MeshHit();
 	}

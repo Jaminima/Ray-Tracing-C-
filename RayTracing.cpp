@@ -34,8 +34,8 @@ int main(int argc, char** argv)
 	lights[1].colormul = Vec3(0.8f, 0.0f, 0.8f);
 
 	Triangle* t = new Triangle[]{
-			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, -1), Color(255, 0, 255)),
-			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, 1), Color(0, 255, 0))
+			Triangle(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(0, 1, 1), Color(255, 0, 255)),
+			Triangle(Vec3(0, 0, 0), Vec3(0, 0, 1), Vec3(0, 1, 1), Color(0, 255, 0))
 	};
 
 	for (unsigned int i = 0;i < totalSceneObjects;i++) {
