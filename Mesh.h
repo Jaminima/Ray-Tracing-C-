@@ -39,7 +39,7 @@ public:
 
 	MeshHit RayHitDistance(Ray r, array_view<Triangle, 1> SceneTrianglesView) restrict(amp, cpu) {
 		float hit = OuterCollider.RayHitDistance(r);
-		if (hit != -1) {
+		if (hit != -1 || (OuterCollider.Center - r.Origin).norm()<OuterCollider.radius) {
 			if (triStart == -1) { return MeshHit(); }
 
 			float smallest = -1;
