@@ -18,11 +18,11 @@ public:
 	}
 };
 
-bool HitsObject(Ray r, float distLimit, array_view<Mesh, 1> SceneObjects) restrict(amp, cpu)
+bool HitsObject(Ray r, float distLimit, array_view<Mesh, 1> SceneObjects, array_view<Triangle, 1> SceneTrianglesView) restrict(amp, cpu)
 {
 	for (unsigned int i = 0; i < SceneObjects.extent.size(); i++)
 	{
-		float dist = SceneObjects[i].RayHitDistance(r);
+		float dist = SceneObjects[i].RayHitDistance(r,SceneTrianglesView);
 
 		if (dist > 0)
 		{
@@ -34,7 +34,7 @@ bool HitsObject(Ray r, float distLimit, array_view<Mesh, 1> SceneObjects) restri
 	return true;
 }
 
-Hit ClosestHit(Ray r, array_view<Mesh, 1> SceneObjects, int ignoreObject = -1) restrict(amp, cpu)
+Hit ClosestHit(Ray r, array_view<Mesh, 1> SceneObjects, array_view<Triangle, 1> SceneTrianglesView, int ignoreObject = -1) restrict(amp, cpu)
 {
 	Hit closest = Hit();
 
@@ -42,7 +42,7 @@ Hit ClosestHit(Ray r, array_view<Mesh, 1> SceneObjects, int ignoreObject = -1) r
 	{
 		if (i != ignoreObject)
 		{
-			float dist = SceneObjects[i].RayHitDistance(r);
+			float dist = SceneObjects[i].RayHitDistance(r,SceneTrianglesView);
 
 			if (dist > 0)
 			{

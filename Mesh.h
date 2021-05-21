@@ -5,26 +5,33 @@
 class Mesh : public SceneObject {
 public:
 	Sphere OuterCollider;
-	Triangle Triangles[10];
-	unsigned int tri = 0;
+	unsigned int triStart = -1, triEnd = -1;
 
 	Mesh() restrict(amp,cpu) {}
 
 	Mesh(unsigned int tri) restrict(cpu) {
-		this->tri = tri;
+		this->triStart = tri;
+		sceneTrianglesHead += tri;
+		this->triEnd = tri;
 		//Triangles = new Triangle[tri];
 	}
 
-	float RayHitDistance(Ray r) restrict(amp, cpu) {
+	Mesh(Triangle* triangles, Triangle* sceneTriangles) restrict(cpu) : Mesh(sizeof(triangles) / sizeof(triangles[0])) {
+		for (unsigned int i = triStart;i <= triEnd;i++) {
+			sceneTriangles[i] = triangles[i - triStart];
+		}
+	}
+
+	float RayHitDistance(Ray r, array_view<Triangle, 1> SceneTrianglesView) restrict(amp, cpu) {
 		float hit = OuterCollider.RayHitDistance(r);
 		if (hit > 0) {
-			if (tri == 0) { return hit; }
+			if (triStart == -1) { return hit; }
 
 			float smallest = -1;
 			float t = 0;
 
-			for (unsigned int i = 0;i < tri;i++) {
-				t = Triangles[i].RayHitDistance(r);
+			for (unsigned int i = triStart; i <= triEnd;i++) {
+				t = SceneTrianglesView[i].RayHitDistance(r);
 				if (t != -1 && t < smallest) smallest = t;
 			}
 			return t;

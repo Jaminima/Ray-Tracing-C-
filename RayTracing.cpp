@@ -33,10 +33,12 @@ int main(int argc, char** argv)
 	lights[1].Position = Vec3(-1, -5, -5);
 	lights[1].colormul = Vec3(0.8f, 0.0f, 0.8f);
 
-	sceneObjects[0] = Mesh(1);
+	sceneObjects[0] = Mesh(
+		new Triangle[]{ 
+			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, -1), Color(200, 200, 200)) 
+		}, sceneTriangles);
 
-	sceneObjects[0].Triangles[0] = Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, -1), Color(200, 200, 200));
-	sceneObjects[0].OuterCollider = Sphere(7.0f, sceneObjects[0].Triangles[0].ApproxPosition());
+	sceneObjects[0].OuterCollider = Sphere(7.0f, sceneTriangles[0].ApproxPosition());
 
 	SetupFrame(argc, argv);
 

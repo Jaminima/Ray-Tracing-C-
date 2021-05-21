@@ -2,7 +2,7 @@
 #include "HitChecks.h"
 using namespace fast_math;
 
-Vec3 LightMul(Vec3 point, Camera cam, Vec3 WorldLight, array_view<Mesh, 1> SceneObjects,
+Vec3 LightMul(Vec3 point, Camera cam, Vec3 WorldLight, array_view<Mesh, 1> SceneObjects, array_view<Triangle, 1> SceneTrianglesView,
 	array_view<Light, 1> lights) restrict(amp, cpu)
 {
 	Vec3 lightmul = Vec3(WorldLight);
@@ -20,7 +20,7 @@ Vec3 LightMul(Vec3 point, Camera cam, Vec3 WorldLight, array_view<Mesh, 1> Scene
 
 		r = Ray(point + (delta * 0.01f), delta * -1);
 
-		if (!HitsObject(r, dist, SceneObjects))
+		if (!HitsObject(r, dist, SceneObjects, SceneTrianglesView))
 		{
 			lightmul += lights[i].colormul * (1.0f - (dist / lights[i].FadeOff));
 			lightHits++;
@@ -36,7 +36,7 @@ Vec3 LightMul(Vec3 point, Camera cam, Vec3 WorldLight, array_view<Mesh, 1> Scene
 	return lightmul;
 }
 
-Color RenderRayReflections(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor, array_view<Mesh, 1> SceneObjects,
+Color RenderRayReflections(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor, array_view<Mesh, 1> SceneObjects, array_view<Triangle, 1> SceneTrianglesView,
 	array_view<Light, 1> lights, int ignoreObject) restrict(amp, cpu)
 {
 	Color c(0, 0, 0);
@@ -50,7 +50,7 @@ Color RenderRayReflections(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor,
 
 	while ((closest.hasHit || isFirst) && reflections < reflectionLimit)
 	{
-		closest = ClosestHit(r, SceneObjects, ignoreObject);
+		closest = ClosestHit(r, SceneObjects, SceneTrianglesView, ignoreObject);
 
 		curObj = SceneObjects[closest.objectIndex];
 
@@ -61,18 +61,18 @@ Color RenderRayReflections(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor,
 		reflections++;
 		isFirst = false;
 
-		c = c + (curObj.color * LightMul(closest.intersect, cam, WorldLight, SceneObjects, lights) * (curObj.
+		c = c + (curObj.color * LightMul(closest.intersect, cam, WorldLight, SceneObjects, SceneTrianglesView, lights) * (curObj.
 			reflectivity / reflections));
 	}
 
 	return c;
 }
 
-Color RenderRay(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor, array_view<Mesh, 1> SceneObjects,
+Color RenderRay(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor, array_view<Mesh, 1> SceneObjects, array_view<Triangle, 1> SceneTrianglesView,
 	array_view<Light, 1> lights) restrict(amp, cpu)
 {
 	Color c(0, 0, 0);
-	Hit closest = ClosestHit(r, SceneObjects);
+	Hit closest = ClosestHit(r, SceneObjects, SceneTrianglesView);
 
 	Mesh firstObj;
 
@@ -80,16 +80,16 @@ Color RenderRay(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor, array_view
 	{
 		firstObj = SceneObjects[closest.objectIndex];
 
-		c = c + (firstObj.color * LightMul(closest.intersect, cam, WorldLight, SceneObjects, lights));
+		c = c + (firstObj.color * LightMul(closest.intersect, cam, WorldLight, SceneObjects, SceneTrianglesView, lights));
 
 		c = c + RenderRayReflections(
 			firstObj.PointNormal(closest.intersect, r),
-			cam, WorldLight, WorldColor, SceneObjects, lights, closest.objectIndex);
+			cam, WorldLight, WorldColor, SceneObjects, SceneTrianglesView, lights, closest.objectIndex);
 
 		if (firstObj.opacity != 1)
 		{
 			c = c/* * firstObj.opacity()*/;
-			c = c + (RenderRayReflections(Ray(closest.intersect, r.Direction), cam, WorldLight, WorldColor, SceneObjects, lights,
+			c = c + (RenderRayReflections(Ray(closest.intersect, r.Direction), cam, WorldLight, WorldColor, SceneObjects, SceneTrianglesView, lights,
 				closest.objectIndex) * (1 - firstObj.opacity));
 		}
 		return c;
