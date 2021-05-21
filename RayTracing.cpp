@@ -35,12 +35,12 @@ int main(int argc, char** argv)
 
 	Triangle* t = new Triangle[]{
 			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, -1), Color(255, 0, 255)),
-			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, -5, 1), Color(0, 255, 0))
+			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, 1), Color(0, 255, 0))
 	};
 
 	sceneObjects[0].ImportTriangles(t, 2, sceneTriangles);
 
-	sceneObjects[0].OuterCollider = Sphere(15.0f, sceneTriangles[0].ApproxPosition());
+	sceneObjects[0].OuterCollider = Sphere(15.0f, sceneObjects[0].ApproxPosition(sceneTriangles));
 
 	SetupFrame(argc, argv);
 

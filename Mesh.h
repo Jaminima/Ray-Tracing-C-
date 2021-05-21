@@ -16,6 +16,14 @@ public:
 		//Triangles = new Triangle[tri];
 	}
 
+	Vec3 ApproxPosition(Triangle* sceneTriangles) {
+		Vec3 Avg;
+		for (unsigned int i = triStart;i < triEnd;i++) {
+			Avg = Avg + sceneTriangles[i].ApproxPosition();
+		}
+		return Avg * (1.0f/(triEnd - triStart));
+	}
+
 	bool ImportTriangles(Triangle* triangles, unsigned int tCount, Triangle* sceneTriangles) restrict(cpu) {
 		if (triStart != -1) return false;
 
