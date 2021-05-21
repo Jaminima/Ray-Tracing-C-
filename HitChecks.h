@@ -1,5 +1,5 @@
 #pragma once
-#include "SceneObjectManager.h"
+#include "Mesh.h"
 #include "Light.h"
 #include "Const.h"
 #include <amp.h>
@@ -18,7 +18,7 @@ public:
 	}
 };
 
-bool HitsObject(Ray r, float distLimit, array_view<SceneObjectManager, 1> SceneObjects) restrict(amp, cpu)
+bool HitsObject(Ray r, float distLimit, array_view<Mesh, 1> SceneObjects) restrict(amp, cpu)
 {
 	for (unsigned int i = 0; i < SceneObjects.extent.size(); i++)
 	{
@@ -34,7 +34,7 @@ bool HitsObject(Ray r, float distLimit, array_view<SceneObjectManager, 1> SceneO
 	return true;
 }
 
-Hit ClosestHit(Ray r, array_view<SceneObjectManager, 1> SceneObjects, int ignoreObject = -1) restrict(amp, cpu)
+Hit ClosestHit(Ray r, array_view<Mesh, 1> SceneObjects, int ignoreObject = -1) restrict(amp, cpu)
 {
 	Hit closest = Hit();
 

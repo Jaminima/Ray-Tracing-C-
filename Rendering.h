@@ -5,11 +5,11 @@ using namespace fast_math;
 
 Camera mainCamera = Camera();
 
-SceneObjectManager* sceneObjects = new SceneObjectManager[totalSceneObjects];
+Mesh* sceneObjects = new Mesh[totalSceneObjects];
 Light* lights = new Light[totalLights];
 float* distances = new float[totalSceneObjects];
 
-Color RenderPixel(index<2> idx, array_view<SceneObjectManager, 1> SceneObjects, array_view<Light, 1> lights, Camera cam,
+Color RenderPixel(index<2> idx, array_view<Mesh, 1> SceneObjects, array_view<Light, 1> lights, Camera cam,
 	Vec3 WorldLight, Color WorldColor) restrict(amp, cpu)
 {
 	float vx = (idx[1] / static_cast<float>(px_half)) - 1,
@@ -29,7 +29,7 @@ Color RenderPixel(index<2> idx, array_view<SceneObjectManager, 1> SceneObjects, 
 void RenderScene(array_view<Color, 2> rgb)
 {
 	array_view<Light, 1> LightView(totalLights, lights);
-	array_view<SceneObjectManager, 1> SceneView(totalSceneObjects, sceneObjects);
+	array_view<Mesh, 1> SceneView(totalSceneObjects, sceneObjects);
 
 	Camera cam = mainCamera;
 	Vec3 wrldLight = WorldLight;
