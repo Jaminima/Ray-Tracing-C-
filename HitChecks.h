@@ -22,7 +22,7 @@ bool HitsObject(Ray r, float distLimit, array_view<Mesh, 1> SceneObjects, array_
 {
 	for (unsigned int i = 0; i < SceneObjects.extent.size(); i++)
 	{
-		Mesh::MeshHit dist = SceneObjects[i].RayHitDistance(r,SceneTrianglesView);
+		Mesh::MeshHit dist = SceneObjects[i].RayHitDistance(r, SceneTrianglesView);
 
 		if (dist.dist != -1)
 		{
@@ -42,7 +42,7 @@ Hit ClosestHit(Ray r, array_view<Mesh, 1> SceneObjects, array_view<Triangle, 1> 
 	{
 		if (i != ignoreObject)
 		{
-			Mesh::MeshHit dist = SceneObjects[i].RayHitDistance(r,SceneTrianglesView);
+			Mesh::MeshHit dist = SceneObjects[i].RayHitDistance(r, SceneTrianglesView);
 
 			if (dist.dist != -1)
 			{

@@ -9,7 +9,7 @@ using namespace fast_math;
 Camera mainCamera = Camera();
 
 Mesh* sceneObjects = new Mesh[totalSceneObjects];
-Triangle* sceneTriangles = new Triangle[totalSceneTriangles];
+Triangle* sceneTriangles = new Triangle[maxSceneTriangles];
 Light* lights = new Light[totalLights];
 float* distances = new float[totalSceneObjects];
 
@@ -34,7 +34,7 @@ void RenderScene(array_view<Color, 2> rgb)
 {
 	array_view<Light, 1> LightView(totalLights, lights);
 	array_view<Mesh, 1> SceneView(totalSceneObjects, sceneObjects);
-	array_view<Triangle, 1> SceneTrianglesView(totalSceneTriangles, sceneTriangles);
+	array_view<Triangle, 1> SceneTrianglesView(maxSceneTriangles, sceneTriangles);
 
 	Camera cam = mainCamera;
 	Vec3 wrldLight = WorldLight;
@@ -56,9 +56,9 @@ void RenderScene(array_view<Color, 2> rgb)
 	parallel_for_each(
 		rgb.extent,
 		[=](index<2> idx) restrict(amp)
-	{
-		rgb[idx] = RenderPixel(idx, SceneView, SceneTrianglesView, LightView, cam, wrldLight, wrldColor);
-	}
+		{
+			rgb[idx] = RenderPixel(idx, SceneView, SceneTrianglesView, LightView, cam, wrldLight, wrldColor);
+		}
 	);
 }
 

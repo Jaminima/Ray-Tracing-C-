@@ -7,11 +7,11 @@ bool pick_accelerator()
 
 	auto result = std::find_if(accs.begin(), accs.end(),
 		[](const accelerator& acc)
-	{
-		return !acc.is_emulated &&
-			acc.supports_double_precision &&
-			!acc.has_display;
-	});
+		{
+			return !acc.is_emulated &&
+				acc.supports_double_precision &&
+				!acc.has_display;
+		});
 
 	if (result != accs.end())
 	{
@@ -38,9 +38,11 @@ int main(int argc, char** argv)
 			Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, 1), Color(0, 255, 0))
 	};
 
-	sceneObjects[0].ImportTriangles(t, 2, sceneTriangles);
-
-	sceneObjects[0].OuterCollider = Sphere(15.0f, sceneObjects[0].ApproxPosition(sceneTriangles));
+	for (unsigned int i = 0;i < totalSceneObjects;i++) {
+		sceneObjects[i].ImportTriangles(t, 2, sceneTriangles);
+		sceneObjects[i].OuterCollider = Sphere(15.0f, sceneObjects[i].ApproxPosition(sceneTriangles));
+		sceneObjects[i].Position = Vec3(rand() % 40 - 20, rand() % 40 - 20, rand() % 40 - 20);
+	}
 
 	SetupFrame(argc, argv);
 
