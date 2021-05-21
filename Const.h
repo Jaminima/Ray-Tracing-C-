@@ -17,7 +17,7 @@ const int reflectionLimit = 100, lightHitLimit = 100;
 
 const bool runOnCpu = false;
 
-const Vec3 WorldLight(0.1f, 0.1f, 0.1f);
+const Vec3 WorldLight(0.8f, 0.8f, 0.8f);
 
 const Color WorldColor(200, 200, 200);
 

@@ -5,37 +5,53 @@
 class Mesh : public SceneObject {
 public:
 	Sphere OuterCollider;
-	unsigned int triStart = -1, triEnd = -1;
+	int triStart = -1, triEnd = -1;
 
 	Mesh() restrict(amp,cpu) {}
 
 	Mesh(unsigned int tri) restrict(cpu) {
-		this->triStart = tri;
+		this->triStart = sceneTrianglesHead;
 		sceneTrianglesHead += tri;
-		this->triEnd = tri;
+		this->triEnd = sceneTrianglesHead;
 		//Triangles = new Triangle[tri];
 	}
 
-	Mesh(Triangle* triangles, Triangle* sceneTriangles) restrict(cpu) : Mesh(sizeof(triangles) / sizeof(triangles[0])) {
-		for (unsigned int i = triStart;i <= triEnd;i++) {
+	bool ImportTriangles(Triangle* triangles, unsigned int tCount, Triangle* sceneTriangles) restrict(cpu) {
+		if (triStart != -1) return false;
+
+		this->triStart = sceneTrianglesHead;
+		sceneTrianglesHead += tCount;
+		this->triEnd = sceneTrianglesHead;
+
+		for (unsigned int i = triStart;i < triEnd;i++) {
 			sceneTriangles[i] = triangles[i - triStart];
 		}
+
+		return true;
 	}
 
-	float RayHitDistance(Ray r, array_view<Triangle, 1> SceneTrianglesView) restrict(amp, cpu) {
+struct MeshHit {
+public: 
+	float dist; unsigned int triIDX; 
+	MeshHit(float d, unsigned int  t) restrict(amp,cpu) { dist = d; triIDX = t; }
+	MeshHit() restrict(amp,cpu) { dist = -1; }
+};
+
+	MeshHit RayHitDistance(Ray r, array_view<Triangle, 1> SceneTrianglesView) restrict(amp, cpu) {
 		float hit = OuterCollider.RayHitDistance(r);
-		if (hit > 0) {
-			if (triStart == -1) { return hit; }
+		if (hit != -1) {
+			if (triStart == -1) { return MeshHit(); }
 
 			float smallest = -1;
+			unsigned int triIDX;
 			float t = 0;
 
-			for (unsigned int i = triStart; i <= triEnd;i++) {
+			for (unsigned int i = triStart; i < triEnd;i++) {
 				t = SceneTrianglesView[i].RayHitDistance(r);
-				if (t != -1 && t < smallest) smallest = t;
+				if (t != -1 && t < smallest) { smallest = t; triIDX = i; }
 			}
-			return t;
+			return MeshHit(t,triIDX);
 		}
-		return -1;
+		return MeshHit();
 	}
 };

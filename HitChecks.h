@@ -10,7 +10,7 @@ struct Hit
 public:
 	bool hasHit = false;
 	float distance = 0;
-	unsigned int objectIndex = 0;
+	unsigned int objectIndex = 0, triangleIndex = 0;
 	Vec3 intersect;
 
 	Hit() restrict(amp, cpu)
@@ -22,13 +22,13 @@ bool HitsObject(Ray r, float distLimit, array_view<Mesh, 1> SceneObjects, array_
 {
 	for (unsigned int i = 0; i < SceneObjects.extent.size(); i++)
 	{
-		float dist = SceneObjects[i].RayHitDistance(r,SceneTrianglesView);
+		Mesh::MeshHit dist = SceneObjects[i].RayHitDistance(r,SceneTrianglesView);
 
-		if (dist > 0)
+		if (dist.dist != -1)
 		{
-			dist = SceneObjects[i].CorrectDistance(r, dist);
+			dist.dist = SceneObjects[i].CorrectDistance(r, dist.dist);
 
-			if (dist <= distLimit) return false;
+			if (dist.dist <= distLimit) return false;
 		}
 	}
 	return true;
@@ -42,18 +42,19 @@ Hit ClosestHit(Ray r, array_view<Mesh, 1> SceneObjects, array_view<Triangle, 1> 
 	{
 		if (i != ignoreObject)
 		{
-			float dist = SceneObjects[i].RayHitDistance(r,SceneTrianglesView);
+			Mesh::MeshHit dist = SceneObjects[i].RayHitDistance(r,SceneTrianglesView);
 
-			if (dist > 0)
+			if (dist.dist != -1)
 			{
-				dist = SceneObjects[i].CorrectDistance(r, dist);
+				dist.dist = SceneTrianglesView[closest.triangleIndex].CorrectDistance(r, dist.dist);
 
-				if (dist < closest.distance || !closest.hasHit)
+				if (dist.dist < closest.distance || !closest.hasHit)
 				{
-					closest.distance = dist;
+					closest.distance = dist.dist;
 					closest.objectIndex = i;
 					closest.hasHit = true;
-					closest.intersect = SceneObjects[i].IntersectionPoint(r, closest.distance);
+					closest.triangleIndex = dist.triIDX;
+					closest.intersect = SceneTrianglesView[closest.triangleIndex].IntersectionPoint(r, closest.distance);
 				}
 			}
 		}

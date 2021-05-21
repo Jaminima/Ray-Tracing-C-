@@ -46,13 +46,13 @@ Color RenderRayReflections(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor,
 	bool isFirst = true;
 	unsigned int reflections = 1;
 
-	Mesh curObj;
+	Triangle curObj;
 
 	while ((closest.hasHit || isFirst) && reflections < reflectionLimit)
 	{
 		closest = ClosestHit(r, SceneObjects, SceneTrianglesView, ignoreObject);
 
-		curObj = SceneObjects[closest.objectIndex];
+		curObj = SceneTrianglesView[closest.triangleIndex];
 
 		if (!closest.hasHit) break;
 
@@ -74,11 +74,11 @@ Color RenderRay(Ray r, Camera cam, Vec3 WorldLight, Color WorldColor, array_view
 	Color c(0, 0, 0);
 	Hit closest = ClosestHit(r, SceneObjects, SceneTrianglesView);
 
-	Mesh firstObj;
+	Triangle firstObj;
 
 	if (closest.hasHit)
 	{
-		firstObj = SceneObjects[closest.objectIndex];
+		firstObj = SceneTrianglesView[closest.triangleIndex];
 
 		c = c + (firstObj.color * LightMul(closest.intersect, cam, WorldLight, SceneObjects, SceneTrianglesView, lights));
 
