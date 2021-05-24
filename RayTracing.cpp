@@ -7,11 +7,11 @@ bool pick_accelerator()
 
 	auto result = std::find_if(accs.begin(), accs.end(),
 		[](const accelerator& acc)
-	{
-		return !acc.is_emulated &&
-			acc.supports_double_precision &&
-			!acc.has_display;
-	});
+		{
+			return !acc.is_emulated &&
+				acc.supports_double_precision &&
+				!acc.has_display;
+		});
 
 	if (result != accs.end())
 	{
@@ -33,25 +33,38 @@ int main(int argc, char** argv)
 	lights[1].Position = Vec3(-1, -5, -5);
 	lights[1].colormul = Vec3(0.8f, 0.0f, 0.8f);
 
-	Sphere s0 = Sphere(3, Vec3(5, -5, 0), Color(0, 255, 0));
+	Triangle* t = new Triangle[]{
+		//Front
+			Triangle(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(0, 1, 1), Custom1),
+			Triangle(Vec3(0, 0, 0), Vec3(0, 0, 1), Vec3(0, 1, 1), Custom1),
 
-	sceneObjects[0].SetSphere(s0);
+		//Back
+			Triangle(Vec3(1, 0, 0), Vec3(1, 1, 0), Vec3(1, 1, 1), Custom1),
+			Triangle(Vec3(1, 0, 0), Vec3(1, 0, 1), Vec3(1, 1, 1), Custom1),
 
-	Sphere s1 = Sphere(3, Vec3(-3, 5, -4), Color(255, 0, 0));
+		//Left
+			Triangle(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(1, 1, 0), Custom1),
+			Triangle(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(1, 1, 0), Custom1),
 
-	sceneObjects[1].SetSphere(s1);
+		//Right
+			Triangle(Vec3(0, 0, 1), Vec3(0, 1, 1), Vec3(1, 1, 1), Custom1),
+			Triangle(Vec3(0, 0, 1), Vec3(1, 0, 1), Vec3(1, 1, 1), Custom1),
 
-	Sphere s2 = Sphere(3, Vec3(-2, 0, -10), Color(0, 0, 255), 0, 0.1f);
+		//Bottom
+			Triangle(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(1, 0, 1), Custom1),
+			Triangle(Vec3(0, 0, 0), Vec3(0, 0, 1), Vec3(1, 0, 1), Custom1),
 
-	sceneObjects[2].SetSphere(s2);
+		//Top
+			Triangle(Vec3(0, 1, 0), Vec3(1, 1, 0), Vec3(1, 1, 1), Custom1),
+			Triangle(Vec3(0, 1, 0), Vec3(0, 1, 1), Vec3(1, 1, 1), Custom1),
 
-	Sphere s3 = Sphere(3, Vec3(10, 0, -10));
+	};
 
-	sceneObjects[3].SetSphere(s3);
-
-	Triangle s4 = Triangle(Vec3(0, 0, 1), Vec3(5, 5, 0), Vec3(10, 0, -1), Color(200, 200, 200));
-
-	sceneObjects[4].SetTriangle(s4);
+	for (unsigned int i = 0;i < totalSceneObjects;i++) {
+		sceneObjects[i].ImportTriangles(t, 12, sceneTriangles);
+		sceneObjects[i].OuterCollider = Sphere(2.0f, sceneObjects[i].ApproxPosition(sceneTriangles));
+		sceneObjects[i].Position = Vec3(rand() % 40 - 20, rand() % 40 - 20, rand() % 40 - 20);
+	}
 
 	SetupFrame(argc, argv);
 

@@ -28,6 +28,9 @@
     <Filter Include="Resource Files\Release">
       <UniqueIdentifier>{b37f05d8-41b4-42e7-98d1-941f05ebbd88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GL">
+      <UniqueIdentifier>{dd4be951-72a8-4466-b6db-360741ae9090}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RayTracing.cpp">
@@ -71,9 +74,6 @@
     <ClInclude Include="Triangle.h">
       <Filter>Header Files\Objects\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SceneObjectManager.h">
-      <Filter>Header Files\Objects\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Inputs.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
@@ -83,11 +83,20 @@
     <ClInclude Include="HitChecks.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="EquationObject.h">
-      <Filter>Header Files\Objects\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Objects\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="packages\freeglut.2.8.1.15\build\native\include\GL\freeglut.h">
+      <Filter>GL</Filter>
+    </ClInclude>
+    <ClInclude Include="packages\freeglut.2.8.1.15\build\native\include\GL\freeglut_ext.h">
+      <Filter>GL</Filter>
+    </ClInclude>
+    <ClInclude Include="packages\freeglut.2.8.1.15\build\native\include\GL\freeglut_std.h">
+      <Filter>GL</Filter>
+    </ClInclude>
+    <ClInclude Include="packages\freeglut.2.8.1.15\build\native\include\GL\glut.h">
+      <Filter>GL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

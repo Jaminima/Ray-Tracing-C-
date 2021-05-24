@@ -52,3 +52,17 @@ public:
 		return Color(r * f.x, g * f.y, b * f.z);
 	}
 };
+
+#ifndef __Colors
+#define __Colors
+
+Color Custom1(50,50,50);
+
+Color White(255, 255, 255);
+Color Black(0, 0, 0);
+
+Color Red(255, 0, 0);
+Color Green(0, 255, 0);
+Color Blue(0, 0, 255);
+
+#endif // !Colors
