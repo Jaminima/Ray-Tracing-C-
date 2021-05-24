@@ -5,15 +5,15 @@
 #ifndef __Const
 #define __Const
 
-//const unsigned int px = 720, py = 480;
-const unsigned int px = 1920, py = 1080;
+const unsigned int px = 720, py = 480;
+//const unsigned int px = 1920, py = 1080;
 
 const unsigned int px_half = px / 2.0f, py_half = py / 2.0f;
 
-const unsigned int totalSceneObjects = 20, totalLights = 2, maxSceneTriangles = 100;
+const unsigned int totalSceneObjects = 200, totalLights = 2, maxSceneTriangles = 4000;
 unsigned int sceneTrianglesHead = 0;
 
-const int reflectionLimit = 100, lightHitLimit = 100;
+const int reflectionLimit = 0, lightHitLimit = 1;
 
 const bool runOnCpu = false;
 

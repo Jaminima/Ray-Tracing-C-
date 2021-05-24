@@ -61,8 +61,8 @@ int main(int argc, char** argv)
 	};
 
 	for (unsigned int i = 0;i < totalSceneObjects;i++) {
-		sceneObjects[i].ImportTriangles(t, 10, sceneTriangles);
-		sceneObjects[i].OuterCollider = Sphere(15.0f, sceneObjects[i].ApproxPosition(sceneTriangles));
+		sceneObjects[i].ImportTriangles(t, 12, sceneTriangles);
+		sceneObjects[i].OuterCollider = Sphere(2.0f, sceneObjects[i].ApproxPosition(sceneTriangles));
 		sceneObjects[i].Position = Vec3(rand() % 40 - 20, rand() % 40 - 20, rand() % 40 - 20);
 	}
 
